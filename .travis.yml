@@ -7,7 +7,7 @@ branches:
   only:
     - master
 script:
-  - hexo generate
+  - hexo g --debug
 deploy:
   provider: pages
   skip-cleanup: true
