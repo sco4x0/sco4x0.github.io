@@ -4,7 +4,7 @@ language: zh-Hans
 
 # main menu navigation
 menu:
-  home: /
+  home: /archives
   archives: /archives
   tags: /tags
   Friends: /friends
