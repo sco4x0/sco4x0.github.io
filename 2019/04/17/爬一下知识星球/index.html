@@ -1,0 +1,336 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css" integrity="sha512-ygEyjMC6rqnzJqWGjRTJUPYMEs9JUOm3i7OWUS9CgQ4XkBUvMsgCS1I8JqavidQ2ClHcREB7IbA2mN08+r9Elg==" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js" integrity="sha512-9DNXrSjk17bU9MUbRp3IjwcWe46V8FaGA062PFbryPUAEQVRbz4jiZP6FW0AdbqEGtMYBDWnul3eiGBMJOQajA==" crossorigin="anonymous"></script>
+  
+  
+    <meta name="keywords" content="python,知识星球," />
+  
+
+  
+    <meta name="description" content="爬一下知识星球" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/images/logo.png">
+  <title>爬一下知识星球 [ 4uuu Nya&#39;s HomePage ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://qvq.im/images/logo.png">
+    <span class="title">4uuu Nya&#39;s HomePage</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">Archives</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">Tags</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/friends" class="pure-menu-link">Friends</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        爬一下知识星球
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2019-04-17T10:50:31.000Z">
+        2019-04-17
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%9F%A5%E8%AF%86%E6%98%9F%E7%90%83/" rel="tag">知识星球</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <p>只做一下记录，将爬取下来的内容全都写成了markdown文件</p>
+<p>首先登录网页版， <code>wx.zsxq.com</code></p>
+<p>网上很多文章爬知识星球都是说有个 <code>Authorization</code> 来进行的认证，但不知道是改版了还是怎么，我在写爬虫的时候发现认证依然是 <code>cookie</code>，  其中有一个 <code>zsxq_access_token</code></p>
+<p>首先是 <code>https://api.zsxq.com/v1.10/groups/xxxx/topics?count=20</code></p>
+<p>这个xxxx就是知识星球的id，也就是随便点击一个圈子后，url中 <code>https://wx.zsxq.com/dweb/#/index/xxxxxx</code> 这个 xxx 的部分，其他大概没有什么好说的，主要就是api里怎么取下一页的内容，他没有页标的参数，而是使用 end_time 这个参数来进行分页的</p>
+<p>首先访问这个api后会返回一串很大的json</p>
+<p><img src="/images/703CEE38-9EE2-479F-B897-B0DE14C93294.png"></p>
+<p>其中 <code>create_time</code> 就是用来进行分页的 <code>end_time</code> 参数的值，并且其中的 <code>:</code> 和 <code>+</code> 必须得url编码</p>
+<p>把topics中的一个主题内容展开来看看其中需要关注的内容有什么</p>
+<p><img src="/images/9D725505-0924-4218-BFBB-7AAA48502C76.png"></p>
+<p><code>create_time</code>  当然如果这不是本页最后一条就没啥意义了</p>
+<p><code>show_comments</code> 该主题对应的评论数据，返回的是一个列表，其中需要取的值就是 <code>owner.name</code>（评论者name，<code>text</code> （评论内容，其中有可能存在一个键值为 <code>repliee</code>，这个是对某人的评论进行了回复，同样其中是有name和text的键值</p>
+<p><code>talk</code>，主题内容了，取其中的 <code>owner</code> 就是主题作者，<code>text</code> 就是主题内容，但是这里有几个坑点</p>
+<p>首先是text中的标签，目前遇到的有三种，一个是标签，就像这样的</p>
+<p><img src="/images/WX20190417-112607.png"></p>
+<p>一个是很常见的超链接，知识星球返回来的数据中，对标签都做了处理，全都变成了 <code>&lt;e type=&quot;xx&quot;&gt;</code> 这种形式</p>
+<p>超链接转换后是 <code>&lt;e type=&quot;web&quot; href=&quot;xxx&quot; title=&quot;xxx&quot;&gt;</code></p>
+<p>标签转换后是 <code>&lt;e type=&quot;hashtag&quot; hid=&quot;xx&quot; title=&quot;xxx&quot;&gt;</code></p>
+<p>最后一个就是 @ 功能</p>
+<p>标签长这样 <code>&lt;e type=&quot;mention&quot; uid=&quot;xxx&quot; title=&quot;@xxx&quot;&gt;</code></p>
+<blockquote>
+<p>目前遇到的主题中还没有出现其他的标签。</p>
+</blockquote>
+<p>所以需要对这种的进行一下处理</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_link</span>(<span class="params">text</span>):</span></span><br><span class="line">    result =  re.findall(<span class="string">r&#x27;&lt;e\ [^&gt;]*&gt;&#x27;</span>, text)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> result:</span><br><span class="line">        html = PQ(i)</span><br><span class="line">        <span class="keyword">if</span> html.attr(<span class="string">&#x27;type&#x27;</span>) == <span class="string">&#x27;web&#x27;</span>:</span><br><span class="line">            template = <span class="string">&#x27;[%s](%s)&#x27;</span> % (urllib.parse.unquote(html.attr(<span class="string">&#x27;title&#x27;</span>)), urllib.parse.unquote(html.attr(<span class="string">&#x27;href&#x27;</span>)))</span><br><span class="line">        <span class="keyword">elif</span> html.attr(<span class="string">&#x27;type&#x27;</span>) == <span class="string">&#x27;hashtag&#x27;</span>:</span><br><span class="line">            template = <span class="string">&#x27; `%s` &#x27;</span> % urllib.parse.unquote(html.attr(<span class="string">&#x27;title&#x27;</span>))</span><br><span class="line">        <span class="keyword">elif</span> html.attr(<span class="string">&#x27;type&#x27;</span>) == <span class="string">&#x27;mention&#x27;</span>:</span><br><span class="line">            template = urllib.parse.unquote(html.attr(<span class="string">&#x27;title&#x27;</span>))</span><br><span class="line">        text = text.strip().replace(i, template)</span><br><span class="line">    <span class="keyword">return</span> text</span><br></pre></td></tr></table></figure>
+<p>其次就是图片，这个没有什么好说的，就在 talk.images 中，返回的是一个列表，迭代一下取其中 large 类别的链接下载下来就好了</p>
+<p><img src="/images/WX20190417-113639.png"></p>
+<p>最后是文件，返回的也是一个列表，只不过这个需要再请求一次新的api取下载地址</p>
+<p><img src="/images/WX20190417-113924.png"></p>
+<p>取到这个 <code>file_id</code>, 然后请求 <code>https://api.zsxq.com/v1.10/files/xxx/download_url</code>，把取到的 <code>file_id</code> 替换掉这个 xxx </p>
+<p>返回结果如下，其中的 <code>download_url</code> 就是文件的下载地址了</p>
+<p><img src="/images/WX20190417-114219.png"></p>
+<h2 id="几个坑"><a href="#几个坑" class="headerlink" title="几个坑"></a>几个坑</h2><ul>
+<li>主题内容如果有代码片段，大概率是直接返回没有任何标签的字符串，所以没法进行格式化和高亮的操作，识别不出来</li>
+<li>某些主题可能存在没有正文的情况，也就是说talk中可能是没有text这个键的</li>
+<li>评论中的表情如果不是emoji，就是 <code>[xx]</code>，这个感觉没啥影响，所以就放着了</li>
+</ul>
+<p>最后爬下来的一个效果</p>
+<p><img src="/images/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7-2019-04-17-11.53.00.png"></p>
+
+    </div>
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">Posts</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%A0%E4%B8%AA%E5%9D%91"><span class="toc-text">几个坑</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">
+    <div class="social-share" data-initialized="true">
+      <a href="#" class="social-share-icon icon-weibo"></a>
+      <a href="#" class="social-share-icon icon-qq"></a>
+      <a href="#" class="social-share-icon icon-wechat"></a>
+      <a href="#" class="social-share-icon icon-qzone"></a>
+    </div>
+  </div>
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2018/12/31/2018-%E5%AE%8C%E7%BB%93%E6%92%92%E8%8A%B1-2018-12-31-%E5%8D%97%E4%BA%AC/" rel="next" title="2018 完结撒花 - 2018.12.31 南京">
+          2018 完结撒花 - 2018.12.31 南京
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2020/01/31/TOTOLINK-RCE/" rel="prev" title="TOTOLINK RCE">
+            TOTOLINK RCE
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://qvq.im">Index</a> |
+        <a class="bottom-item" href="https://github.com/sco4x0" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>

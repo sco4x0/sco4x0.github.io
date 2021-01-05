@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css" integrity="sha512-ygEyjMC6rqnzJqWGjRTJUPYMEs9JUOm3i7OWUS9CgQ4XkBUvMsgCS1I8JqavidQ2ClHcREB7IbA2mN08+r9Elg==" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js" integrity="sha512-9DNXrSjk17bU9MUbRp3IjwcWe46V8FaGA062PFbryPUAEQVRbz4jiZP6FW0AdbqEGtMYBDWnul3eiGBMJOQajA==" crossorigin="anonymous"></script>
+  
+  
+    <meta name="keywords" content="icms,sql注入,代码审计," />
+  
+
+  
+    <meta name="description" content="ICMS V6.0.8一处设计缺陷导致sql注入" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/images/logo.png">
+  <title>ICMS V6.0.8一处设计缺陷导致sql注入 [ 4uuu Nya&#39;s HomePage ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://qvq.im/images/logo.png">
+    <span class="title">4uuu Nya&#39;s HomePage</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">Archives</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">Tags</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/friends" class="pure-menu-link">Friends</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        ICMS V6.0.8一处设计缺陷导致sql注入
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2015-08-31T16:07:28.000Z">
+        2015-08-31
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/icms/" rel="tag">icms</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sql%E6%B3%A8%E5%85%A5/" rel="tag">sql注入</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <p>看到user.app.php文件中私信发送的方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">ACTION_pm</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    </span><br><span class="line">            <span class="keyword">$this</span>-&gt;auth <span class="keyword">OR</span> iPHP::code(<span class="number">0</span>,<span class="string">&#x27;iCMS:!login&#x27;</span>,<span class="number">0</span>,<span class="string">&#x27;json&#x27;</span>);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$receiv_uid</span> = (<span class="keyword">int</span>)<span class="variable">$_POST</span>[<span class="string">&#x27;uid&#x27;</span>];</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$content</span>    = iS::escapeStr(<span class="variable">$_POST</span>[<span class="string">&#x27;content&#x27;</span>]);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$receiv_uid</span> <span class="keyword">OR</span> iPHP::code(<span class="number">0</span>,<span class="string">&#x27;iCMS:error&#x27;</span>,<span class="number">0</span>,<span class="string">&#x27;json&#x27;</span>);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$content</span> <span class="keyword">OR</span> iPHP::code(<span class="number">0</span>,<span class="string">&#x27;iCMS:pm:empty&#x27;</span>,<span class="number">0</span>,<span class="string">&#x27;json&#x27;</span>);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$receiv_name</span> = iS::escapeStr(<span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>]);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$send_uid</span>  = user::<span class="variable">$userid</span>;</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$send_name</span> = user::<span class="variable">$nickname</span>;</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$fields</span> = <span class="keyword">array</span>(<span class="string">&#x27;send_uid&#x27;</span>,<span class="string">&#x27;send_name&#x27;</span>,<span class="string">&#x27;receiv_uid&#x27;</span>,<span class="string">&#x27;receiv_name&#x27;</span>,<span class="string">&#x27;content&#x27;</span>);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$data</span>  = compact (<span class="variable">$fields</span>);</span><br><span class="line">    </span><br><span class="line">            msg::send(<span class="variable">$data</span>,<span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">            iPHP::code(<span class="number">1</span>,<span class="string">&#x27;iCMS:pm:success&#x27;</span>,<span class="variable">$id</span>,<span class="string">&#x27;json&#x27;</span>);</span><br><span class="line">    </span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>其中POST传入了Content和Name，跟入escapeStr方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">escapeStr</span>(<span class="params"><span class="variable">$string</span></span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">            <span class="keyword">if</span>(is_array(<span class="variable">$string</span>)) &#123;</span><br><span class="line">    </span><br><span class="line">                <span class="keyword">foreach</span>(<span class="variable">$string</span> <span class="keyword">as</span> <span class="variable">$key</span> =&gt; <span class="variable">$val</span>) &#123;</span><br><span class="line">    </span><br><span class="line">                    <span class="variable">$string</span>[<span class="variable">$key</span>] = iS::escapeStr(<span class="variable">$val</span>);</span><br><span class="line">    </span><br><span class="line">                &#125;</span><br><span class="line">    </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    </span><br><span class="line">                <span class="variable">$string</span> = str_replace(<span class="keyword">array</span>(<span class="string">&#x27;%00&#x27;</span>,<span class="string">&#x27;\\0&#x27;</span>), <span class="string">&#x27;&#x27;</span>, <span class="variable">$string</span>); <span class="comment">//modified@2010-7-5</span></span><br><span class="line">    </span><br><span class="line">                <span class="variable">$string</span> = str_replace(<span class="keyword">array</span>(<span class="string">&#x27;&amp;&#x27;</span>, <span class="string">&#x27;&quot;&#x27;</span>,<span class="string">&quot;&#x27;&quot;</span>, <span class="string">&#x27;&lt;&#x27;</span>, <span class="string">&#x27;&gt;&#x27;</span>), <span class="keyword">array</span>(<span class="string">&#x27;&amp;&#x27;</span>, <span class="string">&#x27;&quot;&#x27;</span>,<span class="string">&#x27;&#x27;</span><span class="string">&#x27;, &#x27;</span>&lt;<span class="string">&#x27;, &#x27;</span>&gt;<span class="string">&#x27;), $string);</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">                $string = preg_replace(&#x27;</span>/&amp;((<span class="comment">#(\d&#123;3,5&#125;|x[a-fA-F0-9]&#123;4&#125;)|[a-zA-Z][a-z0-9]&#123;2,5&#125;);)/&#x27;, &#x27;&amp;\\1&#x27;,$string);</span></span><br><span class="line">    </span><br><span class="line">            &#125;</span><br><span class="line">    </span><br><span class="line">            <span class="keyword">return</span> <span class="variable">$string</span>;</span><br><span class="line">    </span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到特殊符号中过滤了几个常见，但是遗漏了一个 \ ，问题就出在这个地方，回到user.app.php中，往下走，可以看到所有参数都进入了msg::send方法，继续跟入这个方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">send</span>(<span class="params"><span class="variable">$a</span> = <span class="keyword">array</span>(<span class="params"></span></span></span></span><br><span class="line"><span class="function"><span class="params"><span class="params">    </span></span></span></span><br><span class="line"><span class="function"><span class="params"><span class="params">                <span class="string">&quot;send_uid&quot;</span>    =&gt; <span class="number">0</span>,<span class="string">&quot;send_name&quot;</span>  =&gt; <span class="literal">NULL</span>,</span></span></span></span><br><span class="line"><span class="function"><span class="params"><span class="params">    </span></span></span></span><br><span class="line"><span class="function"><span class="params"><span class="params">                <span class="string">&quot;receiv_uid&quot;</span>  =&gt; <span class="number">0</span>,<span class="string">&quot;receiv_name&quot;</span> =&gt; <span class="literal">NULL</span>,</span></span></span></span><br><span class="line"><span class="function"><span class="params"><span class="params">    </span></span></span></span><br><span class="line"><span class="function"><span class="params"><span class="params">                <span class="string">&quot;content&quot;</span>    =&gt; <span class="literal">NULL</span></span></span></span></span><br><span class="line"><span class="function"><span class="params"><span class="params">    </span></span></span></span><br><span class="line"><span class="function"><span class="params"><span class="params">            </span>),<span class="variable">$type</span>=<span class="number">1</span></span>)</span>&#123;</span><br><span class="line">    </span><br><span class="line">            <span class="comment">// $userid = (int)$a[&#x27;userid&#x27;];</span></span><br><span class="line">    </span><br><span class="line">            <span class="comment">// $friend = (int)$a[&#x27;friend&#x27;];</span></span><br><span class="line">    </span><br><span class="line">            <span class="variable">$send_uid</span>    = (<span class="keyword">int</span>)<span class="variable">$a</span>[<span class="string">&#x27;send_uid&#x27;</span>];</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$send_name</span>  = iS::escapeStr(<span class="variable">$a</span>[<span class="string">&#x27;send_name&#x27;</span>]);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$receiv_uid</span>  = (<span class="keyword">int</span>)<span class="variable">$a</span>[<span class="string">&#x27;receiv_uid&#x27;</span>];</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$receiv_name</span> = iS::escapeStr(<span class="variable">$a</span>[<span class="string">&#x27;receiv_name&#x27;</span>]);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$content</span>  = iS::escapeStr(<span class="variable">$a</span>[<span class="string">&#x27;content&#x27;</span>]);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$sendtime</span> = time();</span><br><span class="line">    </span><br><span class="line">            <span class="keyword">if</span>(<span class="variable">$send_uid</span> &amp;&amp; <span class="variable">$send_uid</span>==<span class="variable">$receiv_uid</span> &amp;&amp; !<span class="variable">$a</span>[<span class="string">&#x27;self&#x27;</span>])&#123;</span><br><span class="line">    </span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">    </span><br><span class="line">            &#125;</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$fields</span> = <span class="keyword">array</span>(<span class="string">&#x27;userid&#x27;</span>, <span class="string">&#x27;friend&#x27;</span>, <span class="string">&#x27;send_uid&#x27;</span>, <span class="string">&#x27;send_name&#x27;</span>, <span class="string">&#x27;receiv_uid&#x27;</span>, <span class="string">&#x27;receiv_name&#x27;</span>, <span class="string">&#x27;content&#x27;</span>, <span class="string">&#x27;type&#x27;</span>, <span class="string">&#x27;sendtime&#x27;</span>, <span class="string">&#x27;readtime&#x27;</span>, <span class="string">&#x27;status&#x27;</span>);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$data</span>  = compact (<span class="variable">$fields</span>);</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$data</span>[<span class="string">&#x27;userid&#x27;</span>]  = <span class="variable">$send_uid</span>;</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$data</span>[<span class="string">&#x27;friend&#x27;</span>]  = <span class="variable">$receiv_uid</span>;</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$data</span>[<span class="string">&#x27;readtime&#x27;</span>] = <span class="string">&quot;0&quot;</span>;</span><br><span class="line">    </span><br><span class="line">            <span class="variable">$data</span>[<span class="string">&#x27;status&#x27;</span>]  = <span class="string">&quot;1&quot;</span>;</span><br><span class="line">    </span><br><span class="line">            iDB::insert(<span class="string">&#x27;message&#x27;</span>,<span class="variable">$data</span>);</span><br><span class="line">    </span><br><span class="line">            <span class="keyword">if</span>(<span class="variable">$type</span>==<span class="string">&quot;1&quot;</span>)&#123;</span><br><span class="line">    </span><br><span class="line">                <span class="variable">$data</span>[<span class="string">&#x27;userid&#x27;</span>]  = <span class="variable">$receiv_uid</span>;</span><br><span class="line">    </span><br><span class="line">                <span class="variable">$data</span>[<span class="string">&#x27;friend&#x27;</span>]  = <span class="variable">$send_uid</span>;</span><br><span class="line">    </span><br><span class="line">                iDB::insert(<span class="string">&#x27;message&#x27;</span>,<span class="variable">$data</span>);</span><br><span class="line">    </span><br><span class="line">            &#125;</span><br><span class="line">    </span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>在这里面将id强转成了int类型，然后再次用escapeStr过滤了一下name和content,然后组合成数组传入了insert方法，跟入mysql中的insert方法</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">static</span> <span class="function"><span class="keyword">function</span> <span class="title">insert</span>(<span class="params"><span class="variable">$table</span>, <span class="variable">$data</span></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//      $data = add_magic_quotes($data);</span></span><br><span class="line">    </span><br><span class="line">            <span class="variable">$fields</span> = array_keys(<span class="variable">$data</span>);</span><br><span class="line">    </span><br><span class="line">            <span class="built_in">self</span>::query(<span class="string">&quot;INSERT INTO &quot;</span>.iPHP_DB_PREFIX_TAG.<span class="string">&quot;<span class="subst">&#123;$table&#125;</span> (`&quot;</span> . implode(<span class="string">&#x27;`,`&#x27;</span>,<span class="variable">$fields</span>) . <span class="string">&quot;`) VALUES (&#x27;&quot;</span>.implode(<span class="string">&quot;&#x27;,&#x27;&quot;</span>,<span class="variable">$data</span>).<span class="string">&quot;&#x27;)&quot;</span>);</span><br><span class="line">    </span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">self</span>::<span class="variable">$insert_id</span>;</span><br><span class="line">    </span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>直接就query了，这么一来就可以用\吃掉单引号</p>
+<p>私信这个地方结构是</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> icms_message (`send_uid`,`send_name`,`receiv_uid`,`receiv_name`,`content`,`type`,`sendtime`,`userid`,`friend`,`readtime`,`status`)</span><br></pre></td></tr></table></figure>
+<p><img src="/images/b081309f816b389bb8b6309325cb023e.png" alt="b081309f816b389bb8b6309325cb023e.png"></p>
+
+    </div>
+  </article>
+  <div class="toc-container">
+    
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">
+    <div class="social-share" data-initialized="true">
+      <a href="#" class="social-share-icon icon-weibo"></a>
+      <a href="#" class="social-share-icon icon-qq"></a>
+      <a href="#" class="social-share-icon icon-wechat"></a>
+      <a href="#" class="social-share-icon icon-qzone"></a>
+    </div>
+  </div>
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2015/06/23/%E5%AE%89%E8%A3%85rvm%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" rel="next" title="安装rvm遇到的一些问题">
+          安装rvm遇到的一些问题
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2015/10/31/%E7%AC%AC%E5%85%AD%E5%AD%A3%E6%9E%81%E5%AE%A2%E5%A4%A7%E6%8C%91%E6%88%98%E4%B8%80%E4%BA%9Bwriteup/" rel="prev" title="第六季极客大挑战一些writeup">
+            第六季极客大挑战一些writeup
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://qvq.im">Index</a> |
+        <a class="bottom-item" href="https://github.com/sco4x0" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>

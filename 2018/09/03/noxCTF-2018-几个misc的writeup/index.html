@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css" integrity="sha512-ygEyjMC6rqnzJqWGjRTJUPYMEs9JUOm3i7OWUS9CgQ4XkBUvMsgCS1I8JqavidQ2ClHcREB7IbA2mN08+r9Elg==" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js" integrity="sha512-9DNXrSjk17bU9MUbRp3IjwcWe46V8FaGA062PFbryPUAEQVRbz4jiZP6FW0AdbqEGtMYBDWnul3eiGBMJOQajA==" crossorigin="anonymous"></script>
+  
+  
+    <meta name="keywords" content="writeup,noxCTF,misc," />
+  
+
+  
+    <meta name="description" content="noxCTF 2018 几个misc的writeup" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/images/logo.png">
+  <title>noxCTF 2018 几个misc的writeup [ 4uuu Nya&#39;s HomePage ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://qvq.im/images/logo.png">
+    <span class="title">4uuu Nya&#39;s HomePage</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">Archives</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">Tags</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/friends" class="pure-menu-link">Friends</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        noxCTF 2018 几个misc的writeup
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2018-09-03T16:52:22.000Z">
+        2018-09-03
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/misc/" rel="tag">misc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/noxCTF/" rel="tag">noxCTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/writeup/" rel="tag">writeup</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <p>web做不动了，转去misc看一看，说是misc，其实感觉很多web放里面了，比如这两个python。</p>
+<p>Ps：这个比赛的 <code>Forensics</code> 太可怕了，直到第一天快结束，题板都是这个样子的</p>
+<p><img src="/images/20180909093022.png"></p>
+<p>大部分0解，一两个1解 Orz</p>
+<h1 id="python-for-fun"><a href="#python-for-fun" class="headerlink" title="python for fun"></a>python for fun</h1><p>这个其实没什么好说的，浏览一遍整个站会发现，在 <code>match_signature_to_body</code> 这个功能有用户交互，测试一下会发现这个地方可以任意注入命令，而且没什么过滤，就很简单了</p>
+<p>直接 <code>a,b=(print(open(&#39;/usr/src/app/FLAG&#39;).read())</code> 就可以看到flag了</p>
+<h1 id="python-for-fun-2"><a href="#python-for-fun-2" class="headerlink" title="python for fun 2"></a>python for fun 2</h1><p>相较于<code>python for fun</code>，这个做了很多过滤，因为对py3较py2的改变并不怎么知情(至今没用过py3 Orz。自己把自己给坑哭了</p>
+<p>虽然过滤了很多关键字，但其实测试一下不难发现，很多能用的东西并没有被过滤，只有python中的常见关键字被过滤掉了，仍然可以使用baseclass来按需获取</p>
+<p>所以一个一个找，后面发现了有os，于是选择直接用system去执行系统命令读flag（后来发现whoami居然是root</p>
+<p><img src="/images/20180909094904.png"></p>
+<h1 id="Read-Between-The-Lin"><a href="#Read-Between-The-Lin" class="headerlink" title="Read Between The Lin"></a>Read Between The Lin</h1><p>file发现是<code>gzip compressed data</code>，解了之后打开首先看到一段jsfuck</p>
+<p>看到这题有不少人解出来，还以为jsfuck解开就是flag，于是还装了个逼说这题已经成了，结果秒被打脸</p>
+<p><img src="/images/20180909100056.png"></p>
+<p>这时发现jsfuck下还有一大堆的空白，感觉很奇怪，于是全选了下，发现并不简单</p>
+<p><img src="/images/20180909100343.png"></p>
+<p>这看起来很像whitespace，队友找了个很屌的解释器，结果秒出flag</p>
+<p><img src="/images/20180909100458.png"></p>
+<h1 id="Blind-Date"><a href="#Blind-Date" class="headerlink" title="Blind Date"></a>Blind Date</h1><p>这个题的附件是一张图片，但是打不开，用HexEditor打开后仔细看了看，发现了点端倪</p>
+<p><img src="/images/20180909100730.png"></p>
+<p>首先下下来的图片后缀是jpeg，那么这个文件头应该是<code>JFIF</code>，而且确实看到有JFIF字样，但是位置很奇怪</p>
+<p>正常图片的文件头应该是 <code>FFD8FFE0</code> ，而这个却是 <code>E0FFD8FF</code> 好像是反过来了？</p>
+<p>于是写了个脚本验证猜测，将其中的顺序都倒序了一遍，得到了一张能正常打开的大红枣图片</p>
+<p><img src="/images/20180909101042.png"></p>
+<p>其实看到戴着墨镜，题目名为Blind，就差不多猜到会不会是有盲文(以前有打过一个国内的susteam ctf，有个题叫盲人摸象)，binwalk可以分解出来一个zip包，但是密码是AES，除了爆破好像没办法，问了管理员说是不需要爆破，应该是忽略了什么信息，于是看到图片内容，会发现有一串奇怪的字符串</p>
+<p><img src="/images/20180909101319.png"></p>
+<p>解base64发现就是盲文</p>
+<p><img src="/images/20180909101459.png"></p>
+<p>对照着盲文表得到<code>f4c3p4lm</code>，作为解压密码解开分解出来的zip(解不开，把字母换成大写才能解开。。)，其中flag.txt内容是brainfuck，随便找个解释器得到flag</p>
+<h1 id="Slippery-Situation"><a href="#Slippery-Situation" class="headerlink" title="Slippery Situation"></a>Slippery Situation</h1><p>页面上有很长一段话</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ou upload a zip file, our servers extract the file using bash command &quot;unzip -: file.zip&quot;</span><br><span class="line">the server scans the files inside and returns results!</span><br><span class="line">We dont believe in containers, all zip files are uploaded to &#x2F;files&#x2F; directory and get extracted there for maximum security!</span><br></pre></td></tr></table></figure>
+<p>可以得到两个有用的信息，第一个是会用<code>unzip -: file.zip</code>进行解压，其次是将文件都放在了<code>/files/</code>下</p>
+<p>可以看到用了 <code>unzip -: </code> ，没见过这个option，于是看了下unzip的帮助信息</p>
+<p><img src="/images/20180909102549.png"></p>
+<p>然后就没有然后了。。 随便上传一个zip也只是返回一条信息，于是看了看网页源码，得到一个信息</p>
+<p><code>&lt;!-- Note to self : admin page link : /admin--&gt;</code></p>
+<p>访问admin后是一个登录，但是功能被禁用掉了，在admin的页面还能看到另外一个信息</p>
+<p><code>&lt;!-- Note to self so i wont forget : if a file named key.txt containing the short ssid is found in the ./admin directory then you dont need to login with user and pass to save time --&gt;</code></p>
+<p>可以发现cookie中带了一个shortssid，其实这时已经很明了了，前面unzip的<code>-:</code>就是为了这个地方开的便利。</p>
+<p>将自己的shortssid放到key.txt中，然后压一个包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">4uuu Nya &gt; ~/Desktop/admin &gt; zip -r 1.zip ../admin/key.txt</span><br><span class="line"> adding: ../admin/key.txt (stored 0%)</span><br></pre></td></tr></table></figure>
+<p>上传后访问admin会发现有一串base64</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">4uuu Nya &gt; ~/Desktop/admin &gt; <span class="built_in">echo</span> <span class="string">&#x27;VGhpcyBwYWdlIGlzIG9ubHkgYXZhaWxhYmxlIGZvciBBZG1pblBhbmVsIGJyb3dzZXIgdXNlcnMuDQoNCkFkbWluUGFuZWwvMC4xIGFnZW50IHVzZXJzIG9ubHkh&#x27;</span> | base64 -D</span><br><span class="line">This page is only available <span class="keyword">for</span> AdminPanel browser users.</span><br><span class="line"></span><br><span class="line">AdminPanel/0.1 agent users only!%</span><br></pre></td></tr></table></figure>
+<p>修改下ua再访问就可以看到flag了</p>
+<p><img src="/images/20180909103931.png"></p>
+
+    </div>
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">Posts</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python-for-fun"><span class="toc-text">python for fun</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#python-for-fun-2"><span class="toc-text">python for fun 2</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Read-Between-The-Lin"><span class="toc-text">Read Between The Lin</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Blind-Date"><span class="toc-text">Blind Date</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Slippery-Situation"><span class="toc-text">Slippery Situation</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">
+    <div class="social-share" data-initialized="true">
+      <a href="#" class="social-share-icon icon-weibo"></a>
+      <a href="#" class="social-share-icon icon-qq"></a>
+      <a href="#" class="social-share-icon icon-wechat"></a>
+      <a href="#" class="social-share-icon icon-qzone"></a>
+    </div>
+  </div>
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2018/08/28/%E7%BD%91%E9%BC%8E%E6%9D%AF%E7%AC%AC%E4%B8%89%E5%9C%BA-mmmmy-writeup/" rel="next" title="网鼎杯第三场 mmmmy writeup">
+          网鼎杯第三场 mmmmy writeup
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2018/09/11/CSAW-CTF-2018-WTF-SQL-writeup/" rel="prev" title="CSAW CTF 2018 WTF.SQL writeup">
+            CSAW CTF 2018 WTF.SQL writeup
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://qvq.im">Index</a> |
+        <a class="bottom-item" href="https://github.com/sco4x0" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>

