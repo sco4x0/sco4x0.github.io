@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#202020"/>
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <script src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css" integrity="sha512-ygEyjMC6rqnzJqWGjRTJUPYMEs9JUOm3i7OWUS9CgQ4XkBUvMsgCS1I8JqavidQ2ClHcREB7IbA2mN08+r9Elg==" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js" integrity="sha512-9DNXrSjk17bU9MUbRp3IjwcWe46V8FaGA062PFbryPUAEQVRbz4jiZP6FW0AdbqEGtMYBDWnul3eiGBMJOQajA==" crossorigin="anonymous"></script>
+  
+  
+    <meta name="keywords" content="做梦，渗透," />
+  
+
+  
+    <meta name="description" content="一个梦到的系统从os.path.join误用到root shell" />
+  
+  
+  <link rel="icon" type="image/x-icon" href="/images/logo.png">
+  <title>一个梦到的系统从os.path.join误用到root shell [ 4uuu Nya&#39;s HomePage ]</title>
+  
+    <!-- stylesheets list from config.yml -->
+    
+      <link rel="stylesheet" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css">
+    
+      <link rel="stylesheet" href="/css/xoxo.css">
+    
+  
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+  <div class="nav-container">
+    <nav class="home-menu pure-menu pure-menu-horizontal">
+  <a class="pure-menu-heading" href="/">
+    <img class="avatar" src="https://qvq.im/images/logo.png">
+    <span class="title">4uuu Nya&#39;s HomePage</span>
+  </a>
+
+  <ul class="pure-menu-list clearfix">
+      
+          
+            <li class="pure-menu-item"><a href="/" class="pure-menu-link">Home</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/archives" class="pure-menu-link">Archives</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/tags" class="pure-menu-link">Tags</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/friends" class="pure-menu-link">Friends</a></li>
+          
+      
+          
+            <li class="pure-menu-item"><a href="/about" class="pure-menu-link">About</a></li>
+          
+      
+  </ul>
+   
+</nav>
+  </div>
+
+  <div class="container" id="content-outer">
+    <div class="inner" id="content-inner">
+      <div class="post-container">
+  <article class="post" id="post">
+    <header class="post-header text-center">
+      <h1 class="title">
+        一个梦到的系统从os.path.join误用到root shell
+      </h1>
+      <span>
+        
+        <time class="time" datetime="2021-01-23T12:13:41.000Z">
+        2021-01-23
+      </time>
+        
+      </span>
+      <span class="slash">/</span>
+      <span class="post-meta">
+      <span class="post-tags">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%81%9A%E6%A2%A6%EF%BC%8C%E6%B8%97%E9%80%8F/" rel="tag">做梦，渗透</a></li></ul>
+      </span>
+    </span>
+      <span class="slash">/</span>
+      <span class="read">
+      <span id="busuanzi_value_page_pv"></span> 点击
+    </span>
+      <span class="slash">/</span>
+    </header>
+
+    <div class="post-content">
+      <p>昨晚做了一个梦，梦到了一个系统，对它做了下审计与利用，醒来后赶紧记录一下，如有雷同，纯属不可能</p>
+<p>梦到的系统是用flask写的，整个web应用做成了python的包放到了virtualenv中</p>
+<p>整个系统只有6个大功能</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> system.func1.views <span class="keyword">import</span> func1_module</span><br><span class="line">app.register_module(func1_module, url_prefix=<span class="string">&#x27;/system/func1&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> system.func2.views <span class="keyword">import</span> func2_module</span><br><span class="line">app.register_module(func2_module, url_prefix=<span class="string">&#x27;/system/func2&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> system.func3.views <span class="keyword">import</span> func3_module</span><br><span class="line">app.register_module(func3_module, url_prefix=<span class="string">&#x27;/system/func3&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> system.func4.views <span class="keyword">import</span> func4_module</span><br><span class="line">app.register_module(func4_module, url_prefix=<span class="string">&#x27;/system/func4&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> system.func5.views <span class="keyword">import</span> func5_module</span><br><span class="line">app.register_module(func5_module, url_prefix=<span class="string">&#x27;/system/func5&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> system.func6.views <span class="keyword">import</span> func6_module</span><br><span class="line">app.register_module(func6_module, url_prefix=<span class="string">&#x27;/system/func6&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>几乎所有功能都是有登录校验，那么首先需要解决的是如何获得一个登录凭证</p>
+<h2 id="解决登录问题"><a href="#解决登录问题" class="headerlink" title="解决登录问题"></a>解决登录问题</h2><p>登录操作在 <code>func1</code> 功能模块下的 <code>common</code> 中，有一个 <code>LoginManager</code> 的类，其中处理登录的函数是 <code>user_login</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">user = User.query.filter_by(username=username).first()</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> user:</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span>, lazy_gettext(<span class="string">u&#x27;用户名或密码错误&#x27;</span>), user</span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> password:</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span>, lazy_gettext(<span class="string">u&#x27;密码不能为空&#x27;</span>), user</span><br><span class="line"><span class="keyword">if</span> user.password == hashlib.md5(password).hexdigest():</span><br><span class="line">    <span class="comment"># 登录成功添加session</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="comment"># 登录失败加锁</span></span><br></pre></td></tr></table></figure>
+<p>这可就很犯愁了，正打算看看还有没有什么其他办法的时候看到下边还有一个处理SSO的 <code>SSOManager</code>，其中也有一个校验的操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">auth_certificate</span>(<span class="params">cls, client_id, username</span>):</span></span><br><span class="line">    sso_manage = SSOManager(client_id, username)</span><br><span class="line">    sso_manage.login(username)</span><br><span class="line">    <span class="keyword">if</span> <span class="literal">True</span>:</span><br><span class="line">        access_token = sso_manage.access_token_gen()</span><br><span class="line">        <span class="keyword">if</span> access_token:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span>, access_token</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span>, <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+<p>跟进login发现仅仅是判断是否存在这个用户名，如果存在的话直接就把这个用户的权限和信息取出来放session，而梦到的这个系统用来判断是否登录就是取的session信息，那么找找这里有啥地方调用了</p>
+<p>幸运的是在 <code>views.py</code> 中找到了一个调用SSO里验证的函数</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@func1.route(<span class="params"><span class="string">&#x27;/sso_auth&#x27;</span>, methods=[<span class="string">&#x27;GET&#x27;</span>]</span>)</span></span><br><span class="line"><span class="meta">@csrf</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sso_auth</span>():</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">&#x27;GET&#x27;</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            username = request.args.get(<span class="string">&quot;username&quot;</span>)</span><br><span class="line">            <span class="keyword">if</span> username:</span><br><span class="line">                is_success, data = SSOManager.auth_certificate(SSO_CLIENT_ID,username)</span><br><span class="line">                <span class="keyword">if</span> is_success:</span><br><span class="line">                    token = session.get(<span class="string">&#x27;csrf_token&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">                    <span class="keyword">return</span> jsonify(status=<span class="number">200</span>, access_token=data, csrf_token=token, message=<span class="string">&quot;Authenticate success!&quot;</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="keyword">return</span> jsonify(status=<span class="number">401</span>, message=<span class="string">&quot;Authenticate fail!&quot;</span>)</span><br><span class="line">        <span class="keyword">except</span> Exception:</span><br><span class="line">            <span class="keyword">return</span> jsonify(status=<span class="number">201</span>, message=lazy_gettext(<span class="string">u&quot;后台异常&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>那么直接请求 <code>http://host/func1/sso_auth?username=admin</code>，就可以在返回包中获得一个认证后的sessionid，继续接下来的操作</p>
+<h2 id="误用os-path-join导致的任意文件写入"><a href="#误用os-path-join导致的任意文件写入" class="headerlink" title="误用os.path.join导致的任意文件写入"></a>误用os.path.join导致的任意文件写入</h2><p>在 <code>func6</code> 中，有一个导入数据的操作</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">file = request.files.get(<span class="string">&#x27;file&#x27;</span>, <span class="literal">None</span>)</span><br><span class="line"><span class="keyword">if</span> file:</span><br><span class="line">    filename = file.filename</span><br><span class="line">    file.save(os.path.join(IMPORT_DATA_DIR, filename))</span><br><span class="line">    is_success, response = DataManager.ImportData(IMPORT_DATA_DIR+<span class="string">&#x27;/&#x27;</span>+filename)</span><br><span class="line">    os.remove(IMPORT_DATA_DIR+<span class="string">&#x27;/&#x27;</span>+filename)</span><br></pre></td></tr></table></figure>
+<p>这里的filename是完全可控的， 并没有用 <code>secure_filename</code> 之类的操作去处理，然后放到了 <code>os.path.join</code> 中直接保存了这个文件，然后对文件做了一堆处理，再remove掉</p>
+<p>但是这里存文件和删文件的处理却不一样，这里可以用到一个 <code>os.path.join</code> 的特性</p>
+<p><img src="/images/2021123-1.png"></p>
+<p>处理完文件以后却使用了普通的字符串拼接来删除，那肯定是删不掉的，到此已经得到了一个任意文件写入，那么怎么该怎么利用呢</p>
+<h2 id="nice啊supervisor"><a href="#nice啊supervisor" class="headerlink" title="nice啊supervisor"></a>nice啊supervisor</h2><p>当我想着该怎么扩大这个任意文件写入的影响时，利用梦境GM权限开了一台部署这个系统的机器然后root登了上去翻了翻</p>
+<p>这个时候我注意到这个当前web进程的用户组是 <code>web:web</code>, 那么问题来了，一个什么样的文件是web有权写入并且还能扩大影响的呢</p>
+<p>突然我发现梦里这台机器上跑着supervisor，翻了翻配置文件，有一些配置是这样写的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[group:xxx]</span><br><span class="line">;programs&#x3D;xxx</span><br><span class="line">programs&#x3D;xxx</span><br><span class="line"></span><br><span class="line">[program:xxx]</span><br><span class="line">command&#x3D;sh &#x2F;work&#x2F;service&#x2F;run.sh</span><br><span class="line">autostart&#x3D;true</span><br><span class="line">autorestart&#x3D;true</span><br><span class="line">; 省略</span><br></pre></td></tr></table></figure>
+<p>在服务器上看了一下这个文件惊喜的发现用户组刚好就是 <code>web:web</code>，所以如果我把这个shell给覆盖掉，然后再重启这个xxx服务不就可以实现任意命令执行了吗</p>
+<p>回过头来在web程序中找找有没有操作supervisor的动作，没想到刚刚好有一个功能在做完一系列配置后会重启xxx</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@config.route(<span class="params"><span class="string">&#x27;/xxxManage&#x27;</span>, methods=[<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;PUT&#x27;</span>]</span>)</span></span><br><span class="line"><span class="meta">@login_required</span></span><br><span class="line"><span class="meta">@csrf</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">xxxManage</span>():</span></span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">&quot;GET&quot;</span>:</span><br><span class="line">        <span class="comment"># 省略</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        token = session.get(<span class="string">&#x27;csrf_token&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">        post_data = request.get_json()</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="comment"># 省略处理步骤 </span></span><br><span class="line">            subprocess.Popen([<span class="string">&#x27;sudo&#x27;</span>, <span class="string">&#x27;supervisorctl&#x27;</span>, <span class="string">&#x27;restart&#x27;</span>, <span class="string">&#x27;xxx&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p>而supervisor又是root在跑，一切都是那么恰到好处</p>
+
+    </div>
+  </article>
+  <div class="toc-container">
+    
+  <div id="toc" class="toc-article">
+    <strong class="toc-title">Posts</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E7%99%BB%E5%BD%95%E9%97%AE%E9%A2%98"><span class="toc-text">解决登录问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AF%E7%94%A8os-path-join%E5%AF%BC%E8%87%B4%E7%9A%84%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%99%E5%85%A5"><span class="toc-text">误用os.path.join导致的任意文件写入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nice%E5%95%8Asupervisor"><span class="toc-text">nice啊supervisor</span></a></li></ol>
+  </div>
+
+
+  </div>
+</div>
+<div class="copyright">
+    <span>本作品采用</span>
+    <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by/4.0/">知识共享署名 4.0 国际许可协议</a>
+    <span>进行许可。 转载时请注明原文链接。</span>
+</div>
+<div class="share" style="width: 100%;">
+  <div style="margin: auto; text-align: center; font-size: 0.8em; color: grey;">
+    <div class="social-share" data-initialized="true">
+      <a href="#" class="social-share-icon icon-weibo"></a>
+      <a href="#" class="social-share-icon icon-qq"></a>
+      <a href="#" class="social-share-icon icon-wechat"></a>
+      <a href="#" class="social-share-icon icon-qzone"></a>
+    </div>
+  </div>
+</div>
+
+  
+    <div class="post-nav">
+      <div class="post-nav-item post-nav-next">
+        
+          <span>〈 </span>
+          <a href="/2021/01/01/%E5%9B%9E%E9%A1%BE2020/" rel="next" title="没有鸽掉的2020年终总结">
+          没有鸽掉的2020年终总结
+          </a>
+        
+      </div>
+  
+      <div class="post-nav-item post-nav-prev">
+          
+      </div>
+    </div>
+  
+
+
+    </div>
+
+    
+
+  </div>
+  <footer class="footer text-center">
+    <div id="bottom-inner">
+        <a class="bottom-item" href="https://qvq.im">Index</a> |
+        <a class="bottom-item" href="https://github.com/sco4x0" target="_blank">GitHub</a> |
+        <a class="bottom-item" href="https://hexo.io" target="_blank">Powered by hexo</a> |
+        <a class="bottom-item" href="https://github.com/KevinOfNeu/hexo-theme-xoxo" target="_blank">Theme xoxo</a>
+    </div>
+</footer>
+  
+
+<script>
+  (function(window, document, undefined) {
+
+    var timer = null;
+
+    function returnTop() {
+      cancelAnimationFrame(timer);
+      timer = requestAnimationFrame(function fn() {
+        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if (oTop > 0) {
+          document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+          timer = requestAnimationFrame(fn);
+        } else {
+          cancelAnimationFrame(timer);
+        }
+      });
+    }
+
+    var hearts = [];
+    window.requestAnimationFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function(callback) {
+          setTimeout(callback, 1000 / 60);
+        }
+    })();
+    init();
+
+    function init() {
+      css(".heart{z-index:9999;width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: absolute;}.heart:after{top: -5px;}.heart:before{left: -5px;}");
+      attachEvent();
+      gameloop();
+      addMenuEvent();
+    }
+
+    function gameloop() {
+      for (var i = 0; i < hearts.length; i++) {
+        if (hearts[i].alpha <= 0) {
+          document.body.removeChild(hearts[i].el);
+          hearts.splice(i, 1);
+          continue;
+        }
+        hearts[i].y--;
+        hearts[i].scale += 0.004;
+        hearts[i].alpha -= 0.013;
+        hearts[i].el.style.cssText = "left:" + hearts[i].x + "px;top:" + hearts[i].y + "px;opacity:" + hearts[i].alpha + ";transform:scale(" + hearts[i].scale + "," + hearts[i].scale + ") rotate(45deg);background:" + hearts[i].color;
+      }
+      requestAnimationFrame(gameloop);
+    }
+
+    /**
+     * 给logo设置点击事件
+     * 
+     * - 回到顶部
+     * - 出现爱心
+     */
+    function attachEvent() {
+      var old = typeof window.onclick === "function" && window.onclick;
+      var logo = document.getElementById("logo");
+      if (logo) {
+        logo.onclick = function(event) {
+          returnTop();
+          old && old();
+          createHeart(event);
+        }
+      }
+      
+    }
+
+    function createHeart(event) {
+      var d = document.createElement("div");
+      d.className = "heart";
+      hearts.push({
+        el: d,
+        x: event.clientX - 5,
+        y: event.clientY - 5,
+        scale: 1,
+        alpha: 1,
+        color: randomColor()
+      });
+      document.body.appendChild(d);
+    }
+
+    function css(css) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      try {
+        style.appendChild(document.createTextNode(css));
+      } catch (ex) {
+        style.styleSheet.cssText = css;
+      }
+      document.getElementsByTagName('head')[0].appendChild(style);
+    }
+
+    function randomColor() {
+      // return "rgb(" + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + "," + (~~(Math.random() * 255)) + ")";
+      return "#F44336";
+    }
+
+    function addMenuEvent() {
+      var menu = document.getElementById('menu-main-post');
+      if (menu) {
+        var toc = document.getElementById('toc');
+        if (toc) {
+          menu.onclick = function() {
+            if (toc) {
+              if (toc.style.display == 'block') {
+                toc.style.display = 'none';
+              } else {
+                toc.style.display = 'block';
+              }
+            }
+          };
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+    }
+
+  })(window, document);
+</script>
+
+  
+
+
+
+</body>
+</html>
