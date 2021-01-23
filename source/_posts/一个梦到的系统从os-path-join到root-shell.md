@@ -147,3 +147,4 @@ def xxxManage():
 
 而supervisor又是root在跑，一切都是那么恰到好处
 
+在我拿到root shell的那一瞬间，梦醒了
