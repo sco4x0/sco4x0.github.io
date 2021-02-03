@@ -29,5 +29,5 @@ show_excerpt: true
 show_date: true
 #footer
 index_page: https://qvq.im
-# main_site: https://0xff000000.com
 github: https://github.com/sco4x0
+rss: "atom.xml"
