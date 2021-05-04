@@ -106,6 +106,141 @@ cd ..;cd ..;$(pwd)bin$(pwd)cat $(pwd)home$(pwd)cmd2$(pwd)fla*
 ******
 ```
 
+# [Toddler's Bottle] uaf
+
+```cpp
+#include <fcntl.h>
+#include <iostream> 
+#include <cstring>
+#include <cstdlib>
+#include <unistd.h>
+using namespace std;
+
+class Human{
+private:
+	virtual void give_shell(){
+		system("/bin/sh");
+	}
+protected:
+	int age;
+	string name;
+public:
+	virtual void introduce(){
+		cout << "My name is " << name << endl;
+		cout << "I am " << age << " years old" << endl;
+	}
+};
+
+class Man: public Human{
+public:
+	Man(string name, int age){
+		this->name = name;
+		this->age = age;
+        }
+        virtual void introduce(){
+		Human::introduce();
+                cout << "I am a nice guy!" << endl;
+        }
+};
+
+class Woman: public Human{
+public:
+        Woman(string name, int age){
+                this->name = name;
+                this->age = age;
+        }
+        virtual void introduce(){
+                Human::introduce();
+                cout << "I am a cute girl!" << endl;
+        }
+};
+
+int main(int argc, char* argv[]){
+	Human* m = new Man("Jack", 25);
+	Human* w = new Woman("Jill", 21);
+
+	size_t len;
+	char* data;
+	unsigned int op;
+	while(1){
+		cout << "1. use\n2. after\n3. free\n";
+		cin >> op;
+
+		switch(op){
+			case 1:
+				m->introduce();
+				w->introduce();
+				break;
+			case 2:
+				len = atoi(argv[1]);
+				data = new char[len];
+				read(open(argv[2], O_RDONLY), data, len);
+				cout << "your data is allocated" << endl;
+				break;
+			case 3:
+				delete m;
+				delete w;
+				break;
+			default:
+				break;
+		}
+	}
+
+	return 0;	
+}
+
+```
+
+这个题比较简单，而且把整个流程布置得特别清晰，简单来说也就是将 `introduce` 覆盖为 `give_shell`，main中实例化了以后再进入的分支，可以先case 3将m和w置为野指针，然后随便找个文件，将实例化后 `give_shell` 的地址写进去，再case 2重新分配，参数1设置为实例化分配的大小，IDA中可以看到是0x18个长度
+
+```cpp
+v3 = (Human *)operator new(0x18uLL);
+Man::Man(v3, v10, 25LL);
+```
+
+这样的话就可以分配到刚才的内存，2这个分支选择两次，将Man和Women都设置上，不然调用函数时会报错，作为初学者的我来说最复杂的是虚表的问题，花了点时间去学了点基础知识，学了下通过调试去找了地址，但后来发现直接在IDA里就看到了，随便找个对象比如 `Man`
+
+![](/images/20210503001.png)
+
+```cpp
+Human *__fastcall Man::Man(Human *a1, __int64 a2, int a3)
+{
+  Human *result; // rax
+
+  Human::Human(a1);
+  *(_QWORD *)a1 = off_401570;
+  std::string::operator=((char *)a1 + 16, a2);
+  result = a1;
+  *((_DWORD *)a1 + 2) = a3;
+  return result;
+}
+```
+
+跟进这个 `off_401570`
+
+```
+.rodata:0000000000401560 ; `vtable for'Man
+.rodata:0000000000401560 _ZTV3Man        dq 0                    ; offset to this
+.rodata:0000000000401568                 dq offset _ZTI3Man      ; `typeinfo for'Man
+.rodata:0000000000401570 off_401570      dq offset _ZN5Human10give_shellEv
+.rodata:0000000000401570                                         ; DATA XREF: Man::Man(std::string,int)+24↑o
+.rodata:0000000000401570                                         ; Human::give_shell(void)
+.rodata:0000000000401578                 dq offset _ZN3Man9introduceEv ; Man::introduce(void)
+.rodata:0000000000401580                 public _ZTV5Human ; weak
+```
+
+vfptr 直接就指向了 `give_shell`，重新看到在main中调用方式
+
+```cpp
+(*(void (__fastcall **)(Human *))(*(_QWORD *)v12 + 8LL))(v12);
+(*(void (__fastcall **)(Human *))(*(_QWORD *)v13 + 8LL))(v13);
+```
+
+v12和v13就是Man和Women的地址，对比 `off_401570` 处看到的地址，+了8位刚好是 `introduce`，所以地址设置为 `0x401570-0x8` 即可
+
+![](/images/20210503002.png)
+
+
 # [Rookiss] echo1
 
 只有功能1可以使用，是一个比较明显的溢出(x64)，程序没有开任何保护
