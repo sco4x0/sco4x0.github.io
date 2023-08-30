@@ -1,5 +1,5 @@
 ---
-title: "拟态防御赛easy_upload出题思路"
+title: "拟态防御赛2018 easy_upload出题记录"
 date: 2018-05-14T16:46:36+08:00
 tags: ["拟态防御赛"]
 ---
