@@ -21,7 +21,7 @@ else if($_GET['controller']=='admin_commonuser'){
 	$minfo = $member->select_all("username='".$username."'");
 ```
 
-username直接从post传入并且带入字符串，跟入select_all，函数定义在 model/base_set.class.php
+username直接从post传入并且带入字符串，跟入 `select_all`，函数定义在 `model/base_set.class.php`
 
 ```php
 public function select_all($where = '1=1', $orderby1 = '', $orderby2 = 'DESC') { 
@@ -150,16 +150,16 @@ function cut(){
 
 ```php
 function daddslashes($string, $force = 0) {
-	if(!MAGIC_QUOTES_GPC || $force) {
-		if(is_array($string)) {
-			foreach($string as $key => $val) {
-				$string[$key] = daddslashes($val, $force);
-			}
-		} else {
-			$string = htmlspecialchars(addslashes($string));
-		}
-	}
-	return ($string);
+    if(!MAGIC_QUOTES_GPC || $force) {
+        if(is_array($string)) {
+            foreach($string as $key => $val) {
+                $string[$key] = daddslashes($val, $force);
+            }
+        } else {
+            $string = htmlspecialchars(addslashes($string));
+        }
+    }
+    return ($string);
 }
 ```
 
