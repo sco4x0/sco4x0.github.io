@@ -19,7 +19,7 @@ Team:
 - [安全盒子](http://www.secbox.cn/)
 - [Nu1L](https://www.nu1l.com/)
 
-喜欢追番的web狗，一条咸鱼
+~~喜欢追番的web狗~~，一条咸鱼
 
 ~~目前在南京这个四季天气随机播放的城市~~
 
