@@ -270,7 +270,7 @@ if ($upload_result === true) {
 
 可以看到其中对文件名做了处理，而这里的正则界定了首尾，导致在文件末尾增加空白字符即可绕过判断，之后会有一次字符串替换，这里将空格替换为了下划线，但是仍然可以使用 `%0d` 这些字符进行绕过，之后计算了hash做入库处理，调用 `move_uploaded_file` 完成文件移动，真实文件名为 `入库ID_文件名.php`
 
-但是这里由于 `.htaccess`，会导致及时成功上传了php文件也无法访问，当前docker环境中，只解析 `php` 这个后缀，所以无法通过上传 `phtml` 等后缀进行直接访问
+但是这里由于 `.htaccess`，会导致即使成功上传了php文件也无法访问，当前docker环境中，只解析 `php` 这个后缀，所以无法通过上传 `phtml` 等后缀进行直接访问
 
 ```shell
 root@9415a5c3eeac:/var/www/html/pandora_console/attachment# cat .htaccess
