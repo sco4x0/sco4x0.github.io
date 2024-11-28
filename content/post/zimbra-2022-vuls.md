@@ -1,5 +1,5 @@
 ---
-title: "Zimbra Mail RCE+XSS记录"
+title: "2022 Zimbra Mail RCE+XSS记录"
 date: 2024-10-23T15:59:12+08:00
 tags: ["zimbra"]
 ---
