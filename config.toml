@@ -233,9 +233,12 @@ copyright = ""            # default: author.name ↓        # 默认为下面配
 #  isPlainText = true
 #  isHTML = false
 #
-#[outputs]
-#  home = ["HTML", "RSS"]
+[outputs]
+  home = ["HTML", "RSS"]
 #  page = ["HTML", "MarkDown"]
 #  section = ["HTML", "RSS"]
 #  taxonomy = ["HTML", "RSS"]
 #  taxonomyTerm = ["HTML"]
+
+[outputFormats.RSS]
+baseName = "atom"
